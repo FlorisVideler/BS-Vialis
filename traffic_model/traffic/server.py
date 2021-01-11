@@ -26,7 +26,7 @@ def draw(agent):
         return draw_road(agent)
     if agent.agent_type == "light":
         return draw_light(agent)
-    return {"Shape": "rect", "Filled": "true", "Color": "Pink", "w": 8, "h": 8}
+    return {"Shape": "rect", "Filled": "true", "Color": "Cyan", "w": 8, "h": 8}
 
 
 def draw_sensor(sensor):

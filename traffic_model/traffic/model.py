@@ -13,9 +13,7 @@ from mesa.space import ContinuousSpace
 from mesa.time import RandomActivation
 
 from .agents import *
-import os
 
-print (os.getcwd())
 with open('traffic/data/lanesetporc.json') as json_file:
     data = json.load(json_file)
 
@@ -47,8 +45,12 @@ class Traffic(Model):
         self.population = population
         self.schedule = RandomActivation(self)
         self.space = ContinuousSpace(width, height, True)
+        self.lanes = {}
         self.make_agents()
         self.running = True
+        print(self.lanes['1'])
+        self.just_test_one_car()
+
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
@@ -65,6 +67,33 @@ class Traffic(Model):
     def place_road_nodes(self):
         pass
 
+    def just_test_one_car(self):
+        ln = []
+        list_nodes = self.lanes['1']['in']['nodes'] + self.lanes['1']['conn']['nodes'] + self.lanes['1']['out']['nodes']
+        for i in range(len(list_nodes)-1):
+            if list_nodes[i].pos != list_nodes[i+1].pos:
+                ln.append(list_nodes[i])
+
+        print(self.lanes.keys())
+        ln.append(list_nodes[len(list_nodes)-1])
+        car = Car(69420, self, self.lanes['1']['in']['nodes'][0].pos, ln, 0, self.lanes['1']['in']['nodes'][0], self.lanes['1']['in']['nodes'][1], self.lanes['1']['out']['nodes'][-1])
+        self.space.place_agent(car, self.lanes['1']['in']['nodes'][0].pos)
+        self.schedule.add(car)
+        #
+        # car = Car(69421, self, self.lanes['2']['in']['nodes'][0].pos, ln, 0, self.lanes['2']['in']['nodes'][0],
+        #           self.lanes['2']['in']['nodes'][1], self.lanes['2']['out']['nodes'][-1])
+        # self.space.place_agent(car, self.lanes['2']['in']['nodes'][0].pos)
+        # self.schedule.add(car)
+        #
+        # car = Car(69422, self, self.lanes['7']['in']['nodes'][0].pos, ln, 0, self.lanes['7']['in']['nodes'][0],
+        #           self.lanes['7']['in']['nodes'][1], self.lanes['7']['out']['nodes'][-1])
+        # self.space.place_agent(car, self.lanes['7']['in']['nodes'][0].pos)
+        # self.schedule.add(car)
+
+        # car = Car(69423, self, self.lanes['8']['in']['nodes'][0].pos, ln, 0, self.lanes['8']['in']['nodes'][0],
+        #           self.lanes['8']['in']['nodes'][1], self.lanes['8']['out']['nodes'][-1])
+        # self.space.place_agent(car, self.lanes['8']['in']['nodes'][0].pos)
+        # self.schedule.add(car)
 
     def make_agents(self):
         """
@@ -74,13 +103,33 @@ class Traffic(Model):
         roads = []
         lights = []
         light_dict = {}
+        lanes = {}
+        lane_connects = {}
+        all_lanes = {}
         for lane in data:
+            nodes = []
+            lane_id = lane['laneID']
+
             if lane['laneAttributes']['type_lane'] == 'vehicle':
+                all_lanes[lane_id] = []
                 if lane['nodes'][0]['attribute'] == 'stopLine':
                     stop_line_lane = True
+                    connecting_lane = lane['connectsTo']['lane']
+                    lane_info = {
+                        'in': {
+                            'nodes': []
+                        },
+                        'conn': {
+                            'nodes': []
+                        },
+                        'out': {
+                            'nodes': []
+                        }
+                    }
                 else:
                     stop_line_lane = False
-                lane_id = lane['laneID']
+                    connecting_lane = None
+
                 node_count = 0
                 begin_road_node = None
                 start_node = None
@@ -104,6 +153,8 @@ class Traffic(Model):
                     if pos + 1 == len(lane['nodes']):
                         last_node = True
 
+
+
                     posxy = x, y
                     if node_count == 0:
                         if stop_line_lane:
@@ -112,7 +163,10 @@ class Traffic(Model):
                             self.space.place_agent(taffic_light, posxy)
                             self.schedule.add(taffic_light)
                             light_dict[lane_id] = taffic_light
-                    agent = Node(c, self, posxy, stop_line, False, lane_id, look_up, taffic_light, last_node)
+                    agent = Node(c, self, posxy, stop_line, False, lane_id, look_up, taffic_light, last_node, connecting_lane=connecting_lane)
+                    all_lanes[lane_id].append(agent)
+                    if stop_line_lane:
+                        lane_info['in']['nodes'].append(agent)
 
                     if start_node is not None and end_node is None:
                         end_node = agent
@@ -128,23 +182,26 @@ class Traffic(Model):
                                               light_dict[lane_id])
                         else:
                             road_agent = Road(len(roads) + c + 999, self, start_node, end_node, lane_id, last_node)
-                        # self.space.place_agent(road_agent, pos)
-                        # self.schedule.add(road_agent)
+                        self.space.place_agent(road_agent, road_agent.start_node.pos)
+                        self.schedule.add(road_agent)
                         roads.append(road_agent)
                         start_node = end_node
                         end_node = None
-                    # print(len(roads))
 
                     self.space.place_agent(agent, posxy)
                     self.schedule.add(agent)
                     node_count += 1
+
                 if stop_line_lane:
+                    lane_info['in']['nodes'].reverse()
+
                     for pos in lane['regional']:
                         c += 1
                         x = pos['ref_pos'][0] * self.space.x_max
                         y = pos['ref_pos'][1] * self.space.y_max
                         pos = x, y
                         agent = Node(c, self, pos, False, True, 0, look_up, light_dict[lane_id])
+                        lane_info['conn']['nodes'].append(agent)
                         self.space.place_agent(agent, pos)
                         self.schedule.add(agent)
                         if reg_start_node is not None and reg_end_node is None:
@@ -159,6 +216,7 @@ class Traffic(Model):
                             roads.append(road_agent)
                             reg_start_node = reg_end_node
                             reg_end_node = None
+                    lanes[lane_id] = lane_info
 
         for sensor in sensor_data:
             if sensor['sensorDeviceType'] == 'inductionLoop':
@@ -171,7 +229,11 @@ class Traffic(Model):
                 self.space.place_agent(agent, start_pos)
                 self.schedule.add(agent)
 
-        for road in roads:
-            # if l == 38:
-            self.space.place_agent(road, road.start_node.pos)
-            self.schedule.add(road)
+
+        for l in all_lanes:
+            if all_lanes[l][0].connecting_lane:
+                connection = all_lanes[all_lanes[l][0].connecting_lane]
+                lanes[l]['out']['nodes'] = connection
+
+
+        self.lanes = lanes
