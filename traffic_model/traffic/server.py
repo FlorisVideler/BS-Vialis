@@ -26,7 +26,16 @@ def draw(agent):
         return draw_road(agent)
     if agent.agent_type == "light":
         return draw_light(agent)
+    if agent.agent_type == "car":
+        return draw_car(agent)
     return {"Shape": "rect", "Filled": "true", "Color": "Cyan", "w": 8, "h": 8}
+
+
+def draw_car(car):
+    if car.active:
+        return {"Shape": "rect", "Filled": "true", "Color": "Cyan", "w": 8, "h": 8}
+    else:
+        return {}
 
 
 def draw_sensor(sensor):

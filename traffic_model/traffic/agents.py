@@ -64,26 +64,36 @@ class Car(Agent):
         self.node_index = node_index
         self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
         self.current_speed = 1
+        self.active = True
+
+    def move_agent(self, new_pos):
+        self.pos = new_pos
+        self.model.space.move_agent(self, new_pos)
+
+    def get_next_node(self):
+        self.current_node = self.next_node
+        if self.current_node == self.end_node:
+            return False
+        self.next_node = self.lane[self.node_index + 2]
+        return True
+
+    def stop_car(self):
+        self.active = False
 
     def step(self):
         next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
                                                               self.distance_to_next_node, self.current_speed)
-        print(next_distance_to_next_node)
         if next_distance_to_next_node < 0:
-            print('MINDER DAN 0')
-            self.current_node = self.next_node
-            if self.current_node == self.end_node:
+            if not self.get_next_node():
+                self.stop_car()
                 return
-            self.next_node = self.lane[self.node_index + 2]
             self.node_index += 1
-            print(self.current_node.pos, self.next_node.pos)
-            self.pos = self.current_node.pos
+            self.move_agent(self.current_node.pos)
             self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
-            print(self.distance_to_next_node)
             next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
                                                                   self.distance_to_next_node,
                                                                   abs(next_distance_to_next_node))
-        self.pos = next_pos
+        self.move_agent(next_pos)
         self.distance_to_next_node = next_distance_to_next_node
 
 
