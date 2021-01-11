@@ -13,15 +13,17 @@ from mesa.space import ContinuousSpace
 from mesa.time import RandomActivation
 
 from .agents import *
+import os
 
-with open(r'C:\Users\Floris Videler\Desktop\School\BS\simulatie\lanesetporc.json') as json_file:
+print (os.getcwd())
+with open('traffic/data/lanesetporc.json') as json_file:
     data = json.load(json_file)
 
-with open(r'C:\Users\Floris Videler\Desktop\School\BS\simulatie\sensorproc.json') as json_file:
+with open('traffic/data/sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
 
 
-class BoidFlockers(Model):
+class Traffic(Model):
     """
     Flocker model class. Handles agent creation and placement
     """
@@ -39,7 +41,7 @@ class BoidFlockers(Model):
             population: Number of Boids
             width, height: Size of the space.
                     keep from any other"""
-        self.data = self.load_data(r'C:\Users\Floris Videler\Desktop\School\BS\simulatie\BOS210.csv')
+        self.data = self.load_data('traffic/data/BOS210.csv')
         self.step_count = 288002
         self.data_time = self.read_row_col('time')
         self.population = population
@@ -50,8 +52,6 @@ class BoidFlockers(Model):
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
-        filter_col = [col for col in df if col.startswith('light_')]
-        df[filter_col] = df[filter_col].fillna(0)
         return df
 
     def read_row_col(self, col):
@@ -62,6 +62,10 @@ class BoidFlockers(Model):
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
+    def place_road_nodes(self):
+        pass
+
+
     def make_agents(self):
         """
         Create self.population agents, with random positions
@@ -70,7 +74,6 @@ class BoidFlockers(Model):
         roads = []
         lights = []
         light_dict = {}
-        stop_line_lane = False
         for lane in data:
             if lane['laneAttributes']['type_lane'] == 'vehicle':
                 if lane['nodes'][0]['attribute'] == 'stopLine':
@@ -168,47 +171,7 @@ class BoidFlockers(Model):
                 self.space.place_agent(agent, start_pos)
                 self.schedule.add(agent)
 
-        l = 0
         for road in roads:
             # if l == 38:
             self.space.place_agent(road, road.start_node.pos)
             self.schedule.add(road)
-            hmmm_node = road
-            # print('hmm')
-            l += 1
-
-        # for i in range(len(roads)):
-        #     if i > len(roads)-28:
-        #         self.space.place_agent(roads[i], roads[i].start_node.pos)
-        #         self.schedule.add(roads[i])
-
-        # for i in range(len(x_node_list)):
-        #     x = x_node_list[i] * self.space.x_max
-        #     y = y_node_list[i] * self.space.y_max
-        #     pos = np.array((x, y))
-        #     boid = Boid(
-        #         i,
-        #         self,
-        #         pos,
-        #         'node'
-        #     )
-        #     self.space.place_agent(boid, pos)
-        #     self.schedule.add(boid)
-        #
-        # for i in range(len(x_loop_list)):
-        #     x = x_loop_list[i] * self.space.x_max
-        #     y = y_loop_list[i] * self.space.y_max
-        #     pos = np.array((x, y))
-        #     boid = Boid(
-        #         i + node_len,
-        #         self,
-        #         pos,
-        #         'loop'
-        #     )
-        #     self.space.place_agent(boid, pos)
-        #     self.schedule.add(boid)
-
-    def step(self):
-        self.schedule.step()
-        self.data_time = self.read_row_col('time')
-        self.step_count += 1
