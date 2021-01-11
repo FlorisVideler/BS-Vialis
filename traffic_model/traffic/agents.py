@@ -1,12 +1,19 @@
 from mesa import Agent
 import math
 
-
-class Lane:
-    def __init__(self, lane_id: str, nodes: list):
-        self.lane_id = lane_id
-        self.nodes = nodes
-
+def get_next_point(curr_point, target_point, distance_between_points, distance):
+    """
+    :param curr_point: current coordinates
+    :param target_point: target coordinates
+    :param distance_between_points: distance between current point and target point
+    :param distance: distance you want to travel
+    :return: the next coordinates, distance between next point en target point
+    """
+    x = target_point[0] - curr_point[0]
+    y = target_point[1] - curr_point[1]
+    factor = distance / distance_between_points
+    next_point = (curr_point[0] + (x * factor), curr_point[1] + (y * factor))
+    return next_point, distance_between_points - distance
 
 class Node(Agent):
     def __init__(
@@ -17,12 +24,10 @@ class Node(Agent):
             stop_line: bool,
             reg: bool,
             lane_id: int,
-            real_pos: str,
             light,
-            last_node: bool = False,
+            connecting_lane=None,
             active: bool = True,
             agent_type: str = "node",
-            connecting_lane=None
     ):
         super().__init__(unique_id, model)
         self.pos = pos
@@ -31,9 +36,7 @@ class Node(Agent):
         self.reg = reg
         self.active = active
         self.lane_id = lane_id
-        self.real_pos = real_pos
         self.light = light
-        self.last_node = last_node
         self.connecting_lane = connecting_lane
 
 
@@ -47,7 +50,6 @@ class Car(Agent):
                  current_node: Node,
                  next_node: Node,
                  end_node: Node,
-
                  agent_type: str = "car"
                  ):
         super().__init__(unique_id, model)
@@ -61,22 +63,8 @@ class Car(Agent):
         self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
         self.current_speed = 1
 
-    def get_next_point(self, curr_point, target_point, distance_between_points, distance):
-        """
-        :param curr_point: current coordinates
-        :param target_point: target coordinates
-        :param distance_between_points: distance between current point and target point
-        :param distance: distance you want to travel
-        :return: the next coordinates, distance between next point en target point
-        """
-        x = target_point[0] - curr_point[0]
-        y = target_point[1] - curr_point[1]
-        factor = distance / distance_between_points
-        next_point = (curr_point[0] + (x * factor), curr_point[1] + (y * factor))
-        return next_point, distance_between_points - distance
-
     def step(self):
-        next_pos, next_distance_to_next_node = self.get_next_point(self.pos, self.next_node.pos,
+        next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
                                                                    self.distance_to_next_node, self.current_speed)
         print(next_distance_to_next_node)
         if next_distance_to_next_node < 0:
@@ -90,7 +78,7 @@ class Car(Agent):
             self.pos = self.current_node.pos
             self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
             print(self.distance_to_next_node)
-            next_pos, next_distance_to_next_node = self.get_next_point(self.pos, self.next_node.pos,
+            next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
                                                                        self.distance_to_next_node, abs(next_distance_to_next_node))
         self.pos = next_pos
         self.distance_to_next_node = next_distance_to_next_node
@@ -104,7 +92,6 @@ class Road(Agent):
             start_node: Node,
             end_node: Node,
             lane_id: str,
-            start: bool = True,
             light=None,
             active: bool = True,
             agent_type: str = "road"
@@ -116,7 +103,6 @@ class Road(Agent):
         self.agent_type = agent_type
         self.active = active
         self.light = light
-        self.start = start
 
 
 class Sensor(Agent):
