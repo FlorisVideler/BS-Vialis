@@ -1,7 +1,8 @@
 from mesa import Agent
 import math
 
-def get_next_point(curr_point, target_point, distance_between_points, distance):
+
+def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float):
     """
     :param curr_point: current coordinates
     :param target_point: target coordinates
@@ -14,6 +15,7 @@ def get_next_point(curr_point, target_point, distance_between_points, distance):
     factor = distance / distance_between_points
     next_point = (curr_point[0] + (x * factor), curr_point[1] + (y * factor))
     return next_point, distance_between_points - distance
+
 
 class Node(Agent):
     def __init__(
@@ -65,7 +67,7 @@ class Car(Agent):
 
     def step(self):
         next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                   self.distance_to_next_node, self.current_speed)
+                                                              self.distance_to_next_node, self.current_speed)
         print(next_distance_to_next_node)
         if next_distance_to_next_node < 0:
             print('MINDER DAN 0')
@@ -79,7 +81,8 @@ class Car(Agent):
             self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
             print(self.distance_to_next_node)
             next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                       self.distance_to_next_node, abs(next_distance_to_next_node))
+                                                                  self.distance_to_next_node,
+                                                                  abs(next_distance_to_next_node))
         self.pos = next_pos
         self.distance_to_next_node = next_distance_to_next_node
 
