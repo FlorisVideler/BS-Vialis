@@ -9,10 +9,10 @@ from mesa.time import RandomActivation
 
 from .agents import *
 
-with open('simulation/data/lanesetporc.json') as json_file:
+with open('visualization/data/lanesetporc.json') as json_file:
     data = json.load(json_file)
 
-with open('simulation/data/sensorproc.json') as json_file:
+with open('visualization/data/sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
 
 
@@ -23,8 +23,10 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.data = self.load_data('simulation/data/BOS210.csv')
-        self.step_count = 288002
+        self.data = self.load_data('visualization/data/BOS210_20210108_20210112.csv')
+        self.geo_data = self.load_geo_data()
+        self.step_count = 433572
+        self.real_step_count = 0
         self.data_time = self.read_row_col('time')
         self.population = population
         self.schedule = RandomActivation(self)
@@ -33,7 +35,7 @@ class Traffic(Model):
         self.lanes = self.make_intersection()
         self.make_sensors()
         self.running = True
-        self.just_test_one_car()
+        self.niels_car()
 
     def load_data(self, path, sep=';'):
         df = pd.read_csv(path, sep=sep)
@@ -42,10 +44,21 @@ class Traffic(Model):
     def read_row_col(self, col):
         return self.data[col][self.step_count]
 
+    def load_geo_data(self):
+        with open('visualization/data/geodata.json') as json_file:
+            return json.load(json_file)
+
     def step(self):
         self.schedule.step()
         self.data_time = self.read_row_col('time')
         self.step_count += 1
+        self.real_step_count += 1
+
+    def niels_car(self):
+        print(self.space.x_max, self.space.y_max)
+        pos = self.geo_data[0][0] * self.space.x_max, self.geo_data[0][1] * self.space.y_max
+        niels = NielsCar(69420, self, pos, self.geo_data)
+        self.place_agent(niels, pos)
 
     def just_test_one_car(self):
         print(list(self.lanes.keys()))

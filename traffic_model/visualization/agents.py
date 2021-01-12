@@ -104,6 +104,66 @@ class Car(Agent):
             self.distance_to_next_node = next_distance_to_next_node
 
 
+class NielsCar(Agent):
+    def __init__(self,
+                 unique_id: int,
+                 model,
+                 pos,
+                 geo_data,
+                 index: int = 1,
+                 active: bool = True,
+                 agent_type: str = "car"
+                 ):
+        super().__init__(unique_id, model)
+        self.geo_data = geo_data
+        self.active = active
+        self.agent_type = agent_type
+        self.pos = pos
+        self.index = index
+        self.next_pos = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
+        self.dist = abs(math.dist(self.pos, self.next_pos))
+        self.speed = self.dist / 10
+        self.path = []
+
+    def step(self):
+        next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_pos, self.dist, self.speed)
+        if next_distance_to_next_node <= 0:
+            print('next node')
+            self.index += 1
+            self.pos = self.next_pos
+            self.next_pos = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
+            self.dist = abs(math.dist(self.pos, self.next_pos))
+            self.speed = self.dist / 10
+            next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_pos, self.dist, self.speed)
+            self.speed = next_distance_to_next_node / 10
+        self.pos = next_pos
+        self.dist = next_distance_to_next_node
+
+        # if self.dist <= 0:
+        #     self.index += 1
+        #
+        #
+        # if self.model.real_step_count % 10 == 0:
+        #     self.index += 1
+        #     self.pos = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
+        # new_pos_index = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
+        # new_pos_index_next = self.geo_data[self.index+1][0] * self.model.space.x_max, self.geo_data[self.index+1][1] * self.model.space.y_max
+        # new_pos, dist = get_next_point(new_pos_index, new_pos_index_next, self.dist, 2)
+        # self.dist = dist
+        # print('dist', dist)
+        # if dist <= 0:
+        #     self.index += 1
+        #     new_pos_index = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][
+        #         1] * self.model.space.y_max
+        #     new_pos_index_next = self.geo_data[self.index + 1][0] * self.model.space.x_max, \
+        #                          self.geo_data[self.index + 1][1] * self.model.space.y_max
+        #     new_pos, dist = get_next_point(new_pos_index, new_pos_index_next, math.dist(new_pos_index, new_pos_index_next),
+        #                                    2)
+        # self.pos = new_pos
+        # print(new_pos, dist)
+
+
+
 class Road(Agent):
     def __init__(
             self,

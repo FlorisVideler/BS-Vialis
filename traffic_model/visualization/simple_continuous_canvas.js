@@ -11,7 +11,7 @@ var ContinuousVisualization = function(height, width, context) {
 			if (p.Shape == "circle")
 				this.drawCircle(p.x, p.y, p.r, p.Color, p.Filled);
 			if (p.Shape == "line")
-				this.drawLine(p.x, p.y, p.x1, p.y1, p.x2, p.y2, p.Color);
+				this.drawLine(p.x, p.y, p.x1, p.y1, p.x2, p.y2, p.Color, p.Type);
 		};
 
 	};
@@ -35,12 +35,18 @@ var ContinuousVisualization = function(height, width, context) {
 
 	};
 
-	this.drawLine = function (px, py, x1, y1, x2, y2, color) {
+	this.drawLine = function (px, py, x1, y1, x2, y2, color, type) {
 		context.beginPath();
 		context.moveTo(x1, y1);
 		context.lineTo(x2, y2);
 		context.strokeStyle = color;
+		if (type === "sensor"){
+			context.lineWidth = 10;
+		}else {
+			context.lineWidth = 2;
+		}
 		context.stroke();
+
 	};
 
 	this.drawRectange = function(x, y, w, h, color, fill) {

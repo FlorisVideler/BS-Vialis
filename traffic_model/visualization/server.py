@@ -41,29 +41,29 @@ def draw_car(car):
 def draw_sensor(sensor):
     if sensor.state == 0:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 255, 0.5)", "x1": sensor.start_pos[0],
-                "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1]}
+                "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
     if sensor.state == 1:
         return {"Shape": "line", "Filled": "true", "Color": "#0000FF", "x1": sensor.start_pos[0],
-                "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1]}
+                "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
 
 
 def draw_road(road):
     if "reg" in road.lane_id:
         if road.light is None:
             return {"Shape": "line", "Filled": "true", "Color": "Red", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1]}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
         if road.light.state == 0:
             return {"Shape": "line", "Filled": "true", "Color": "rgba(102, 178, 118, 0)", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1]}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
         elif road.light.state == 1:
             return {"Shape": "line", "Filled": "true", "Color": "Orange", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1]}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
         else:
             return {"Shape": "line", "Filled": "true", "Color": "Green", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1]}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
     else:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 0, 0.5)", "x1": road.start_node.pos[0],
-                "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1]}
+                "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
 
 
 def draw_node(node):
@@ -87,12 +87,12 @@ def draw_light(light):
         return {"Shape": "rect", "Filled": "true", "Color": "Red", "w": 8, "h": 8}
 
 
-traffic_canvas = SimpleCanvas(draw, 900, 900)
+traffic_canvas = SimpleCanvas(draw, 750, 750)
 time_text_element = TimeText()
 model_params = {
     "population": 100,
-    "width": 900,
-    "height": 900,
+    "width": 750,
+    "height": 750,
 }
 
 server = ModularServer(Traffic, [traffic_canvas, time_text_element], "Traffic", model_params)
