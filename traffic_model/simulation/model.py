@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import json
 import random
+import os
 
 from mesa import Model
 from mesa.space import ContinuousSpace
@@ -9,10 +10,13 @@ from mesa.time import RandomActivation
 
 from .agents import *
 
-with open('simulation/data/lanesetporc.json') as json_file:
+dir_path = os.path.dirname(os.path.realpath(__file__))
+print('dp', dir_path)
+
+with open(dir_path + r'\data\lanesetporc.json') as json_file:
     data = json.load(json_file)
 
-with open('simulation/data/sensorproc.json') as json_file:
+with open(dir_path + r'\data\sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
 
 
@@ -23,7 +27,7 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.data = self.load_data('simulation/data/BOS210.csv')
+        self.data = self.load_data(dir_path + r'\data\BOS210.csv')
         self.step_count = 288002
         self.data_time = self.read_row_col('time')
         self.population = population
