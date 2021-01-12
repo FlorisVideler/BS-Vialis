@@ -4,16 +4,6 @@ from traffic_model.simulation.agents import Car, Node, Light
 from traffic_model.simulation.model import Traffic
 import math
 
-#testCar = Car(
-#            0,
-#           Traffic,
-#            (1,1),
-#            [testNode,testNode],
-#            testNode,
-#            testNode,
-#            testNode,
-#            testNode,
-
 class TestAgents(unittest.TestCase):
     def test_get_next_point(self):
         distance = 1.0
