@@ -1,5 +1,5 @@
 import unittest
-from GitHub.traffic_model.traffic import agents
+from traffic_model.simulation import agents
 import math
 
 

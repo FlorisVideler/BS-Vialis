@@ -1,4 +1,5 @@
 import unittest
+from traffic_model.simulation import server
 
 
 class MyTestCase(unittest.TestCase):

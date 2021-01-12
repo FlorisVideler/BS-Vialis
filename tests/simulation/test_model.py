@@ -1,5 +1,5 @@
 import unittest
-
+from traffic_model.simulation import model
 
 class MyTestCase(unittest.TestCase):
     def test_something(self):
