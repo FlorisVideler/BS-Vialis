@@ -35,8 +35,8 @@ class Traffic(Model):
         self.running = True
         self.just_test_one_car()
 
-    def load_data(self, path):
-        df = pd.read_csv(path, sep=';')
+    def load_data(self, path, sep=';'):
+        df = pd.read_csv(path, sep=sep)
         return df
 
     def read_row_col(self, col):
