@@ -80,21 +80,28 @@ class Car(Agent):
     def stop_car(self):
         self.active = False
 
+    def red_light(self):
+        if self.current_node.stop_line and self.current_node.light.state == 0:
+            return True
+        else:
+            return False
+
     def step(self):
-        next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                              self.distance_to_next_node, self.current_speed)
-        if next_distance_to_next_node < 0:
-            if not self.get_next_node():
-                self.stop_car()
-                return
-            self.node_index += 1
-            self.move_agent(self.current_node.pos)
-            self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
+        if not self.red_light():
             next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                  self.distance_to_next_node,
-                                                                  abs(next_distance_to_next_node))
-        self.move_agent(next_pos)
-        self.distance_to_next_node = next_distance_to_next_node
+                                                                  self.distance_to_next_node, self.current_speed)
+            if next_distance_to_next_node < 0:
+                if not self.get_next_node():
+                    self.stop_car()
+                    return
+                self.node_index += 1
+                self.move_agent(self.current_node.pos)
+                self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
+                next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
+                                                                      self.distance_to_next_node,
+                                                                      abs(next_distance_to_next_node))
+            self.move_agent(next_pos)
+            self.distance_to_next_node = next_distance_to_next_node
 
 
 class Road(Agent):
@@ -128,6 +135,8 @@ class Sensor(Agent):
             end_pos: tuple,
             state: int,
             sensor_id: str,
+            lane_id: str,
+            distance_from_light: int,
             agent_type: str = "sensor"
     ):
         super().__init__(unique_id, model)
@@ -137,6 +146,14 @@ class Sensor(Agent):
         self.sensor_id = sensor_id
         self.start_pos = start_pos
         self.end_pos = end_pos
+        self.lane_id = lane_id
+        self.distance_from_light = distance_from_light
+        self.light = self.get_light_from_lane()
+
+    def get_light_from_lane(self):
+        if self.lane_id in self.model.lanes:
+            return self.model.lanes[self.lane_id]['in']['nodes'][0].light
+        return None
 
     def step(self):
         data_state = self.model.read_row_col(self.sensor_id)

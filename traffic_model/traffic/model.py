@@ -52,10 +52,15 @@ class Traffic(Model):
         lane = random.choice(list(self.lanes.keys()))
         print(lane)
         ln = []
+        ln_pos = []
         list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']
-        for i in range(len(list_nodes) - 1):
-            if list_nodes[i].pos != list_nodes[i + 1].pos:
-                ln.append(list_nodes[i])
+        for i in self.lanes[lane]['in']['nodes']:
+            ln.append(i)
+            ln_pos.append(i.pos)
+        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
+            if i.pos not in ln_pos:
+                ln.append(i)
+                ln_pos.append(i.pos)
 
         ln.append(list_nodes[len(list_nodes) - 1])
         car = Car(69420, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
@@ -157,7 +162,6 @@ class Traffic(Model):
                             reg_end_node = None
                     lanes[lane_id] = lane_info
 
-        # ADD TO CONNECT_LANES()
         for l in all_lane_nodes:
             if all_lane_nodes[l][0].connecting_lane:
                 connection = all_lane_nodes[all_lane_nodes[l][0].connecting_lane]
@@ -173,7 +177,7 @@ class Traffic(Model):
                     1] * self.space.y_max
                 end_pos = sensor['sensorRefPos'][1][0] * self.space.x_max, sensor['sensorRefPos'][1][
                     1] * self.space.y_max
-                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'])
+                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'])
                 self.place_agent(agent, start_pos)
 
     def place_agent(self, agent, pos):

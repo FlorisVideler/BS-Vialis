@@ -18,6 +18,8 @@
             "5.2943482"
         ],
         "length": "100",
+        "laneID": "7",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6895670160597921,
@@ -48,6 +50,8 @@
             "5.2945312"
         ],
         "length": "800",
+        "laneID": "7",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.6961907639388264,
@@ -78,6 +82,8 @@
             "5.2947491"
         ],
         "length": "1800",
+        "laneID": "7",
+        "distance": "2400",
         "sensorRefPos": [
             [
                 0.7077416505909733,
@@ -108,6 +114,8 @@
             "5.2950890"
         ],
         "length": "100",
+        "laneID": "7",
+        "distance": "5900",
         "sensorRefPos": [
             [
                 0.7452762219077027,
@@ -138,6 +146,8 @@
             "5.2943681"
         ],
         "length": "100",
+        "laneID": "8",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.683268645268411,
@@ -168,6 +178,8 @@
             "5.2945532"
         ],
         "length": "800",
+        "laneID": "8",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.6900085992519479,
@@ -198,6 +210,8 @@
             "5.2947713"
         ],
         "length": "1800",
+        "laneID": "8",
+        "distance": "2400",
         "sensorRefPos": [
             [
                 0.718967160155467,
@@ -228,6 +242,8 @@
             "5.2951111"
         ],
         "length": "100",
+        "laneID": "8",
+        "distance": "5900",
         "sensorRefPos": [
             [
                 0.7391172984400733,
@@ -258,6 +274,8 @@
             "5.2942647"
         ],
         "length": "100",
+        "laneID": "13",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6195412183039485,
@@ -288,6 +306,8 @@
             "5.2942985"
         ],
         "length": "800",
+        "laneID": "13",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.5923722313899531,
@@ -318,6 +338,8 @@
             "5.2942976"
         ],
         "length": "600",
+        "laneID": "13",
+        "distance": "2800",
         "sensorRefPos": [
             [
                 0.5775675738480632,
@@ -348,6 +370,8 @@
             "5.2941130"
         ],
         "length": "100",
+        "laneID": "13",
+        "distance": "12100",
         "sensorRefPos": [
             [
                 0.3709763636776291,
@@ -378,6 +402,8 @@
             "5.2942121"
         ],
         "length": "100",
+        "laneID": "14",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6174727496685726,
@@ -408,6 +434,8 @@
             "5.2942481"
         ],
         "length": "800",
+        "laneID": "14",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.5918376833141952,
@@ -438,6 +466,8 @@
             "5.2942472"
         ],
         "length": "600",
+        "laneID": "14",
+        "distance": "2800",
         "sensorRefPos": [
             [
                 0.5778232272763176,
@@ -468,6 +498,8 @@
             "5.2940561"
         ],
         "length": "100",
+        "laneID": "14",
+        "distance": "12400",
         "sensorRefPos": [
             [
                 0.3660957073463175,
@@ -498,6 +530,8 @@
             "5.2938096"
         ],
         "length": "100",
+        "laneID": "1",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6946103609357559,
@@ -528,6 +562,8 @@
             "5.2937619"
         ],
         "length": "800",
+        "laneID": "1",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.7342134008878612,
@@ -558,6 +594,8 @@
             "5.2937381"
         ],
         "length": "1800",
+        "laneID": "1",
+        "distance": "2400",
         "sensorRefPos": [
             [
                 0.7422083807835126,
@@ -588,6 +626,8 @@
             "5.2937456"
         ],
         "length": "100",
+        "laneID": "1",
+        "distance": "4800",
         "sensorRefPos": [
             [
                 0.7941060264483247,
@@ -618,6 +658,8 @@
             "5.2938551"
         ],
         "length": "100",
+        "laneID": "2",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6976549608390455,
@@ -648,6 +690,8 @@
             "5.2938016"
         ],
         "length": "800",
+        "laneID": "2",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.7377460664234563,
@@ -678,6 +722,8 @@
             "5.2937822"
         ],
         "length": "1800",
+        "laneID": "2",
+        "distance": "2400",
         "sensorRefPos": [
             [
                 0.7835777535042412,
@@ -708,6 +754,8 @@
             "5.2937960"
         ],
         "length": "100",
+        "laneID": "2",
+        "distance": "5100",
         "sensorRefPos": [
             [
                 0.7998466079430474,
@@ -738,6 +786,8 @@
             "5.2943595"
         ],
         "length": "75",
+        "laneID": "9",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6475236479412053,
@@ -768,6 +818,8 @@
             "5.2943952"
         ],
         "length": "75",
+        "laneID": "9",
+        "distance": "2200",
         "sensorRefPos": [
             [
                 0.6062472401040788,
@@ -798,6 +850,8 @@
             "5.2943929"
         ],
         "length": "75",
+        "laneID": "9",
+        "distance": "2350",
         "sensorRefPos": [
             [
                 0.6031329165397391,
@@ -815,7 +869,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "9",
+        "distance": "2350"
     },
     {
         "sensorID": "28",
@@ -836,6 +892,8 @@
             "5.2937937"
         ],
         "length": "75",
+        "laneID": "3",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6795035675271135,
@@ -853,7 +911,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "3",
+        "distance": "100"
     },
     {
         "sensorID": "29",
@@ -874,6 +934,8 @@
             "5.2941100"
         ],
         "length": "75",
+        "laneID": "4",
+        "distance": "50",
         "sensorRefPos": [
             [
                 0.7026518232732083,
@@ -891,7 +953,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "36",
@@ -899,7 +963,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "37",
@@ -907,7 +973,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "38",
@@ -915,7 +983,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "41",
@@ -923,7 +993,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "42",
@@ -931,7 +1003,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "43",
@@ -939,7 +1013,9 @@
         "sensorDeviceType": "pushButton",
         "realSensorPosition": null,
         "sensorPosition": null,
-        "length": null
+        "length": null,
+        "laneID": "4",
+        "distance": "50"
     },
     {
         "sensorID": "30",
@@ -960,6 +1036,8 @@
             "5.2943225"
         ],
         "length": "100",
+        "laneID": "12",
+        "distance": "100",
         "sensorRefPos": [
             [
                 0.6949822204652102,
@@ -990,6 +1068,8 @@
             "5.2944652"
         ],
         "length": "100",
+        "laneID": "12",
+        "distance": "1200",
         "sensorRefPos": [
             [
                 0.7057661468375481,
@@ -1020,6 +1100,8 @@
             "5.2938813"
         ],
         "length": "500",
+        "laneID": "15",
+        "distance": "1400",
         "sensorRefPos": [
             [
                 0.7398145350588322,
