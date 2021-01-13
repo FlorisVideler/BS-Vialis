@@ -48,9 +48,6 @@ class Traffic(Model):
             '014': 0,
             '034': 0
         }
-        # self.spawn_cars()
-
-        # self.just_test_one_car()
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
@@ -65,19 +62,6 @@ class Traffic(Model):
         self.step_count += 1
 
         self.spawn_cars()
-        #
-        # if self.step_count == 288001:
-        #     self.spawn_cars()
-        # if self.step_count == 288002:
-        #     self.spawn_cars()
-        # if self.step_count == 288003:
-        #     self.spawn_cars()
-        # if self.step_count == 288004:
-        #     self.spawn_cars()
-        # if self.step_count == 288005:
-        #     self.spawn_cars()
-        # if self.step_count == 288006:
-        #     self.spawn_cars()
 
     def spawn_cars(self):
         for loop in self.active_loops.keys():
@@ -102,32 +86,10 @@ class Traffic(Model):
                                 ln.append(i)
                                 ln_pos.append(i.pos)
                         ln.append(list_nodes[len(list_nodes) - 1])
-                        try:
-                            car = Car(self.placed_agent_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
-                                      self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
-                        except IndexError:
-                            print(self.lanes[lane])
-                            raise IndexError
+                        car = Car(self.placed_agent_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
+                                  self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
                         self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
                     self.active_loops[loop] += 1
-        # # print(list(self.lanes.keys()))
-        # lane = random.choice(list(self.lanes.keys()))
-        # # lane = '14'
-        # ln = []
-        # ln_pos = []
-        # list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
-        #     'nodes']
-        # for i in self.lanes[lane]['in']['nodes']:
-        #     ln.append(i)
-        #     ln_pos.append(i.pos)
-        # for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
-        #     if i.pos not in ln_pos:
-        #         ln.append(i)
-        #         ln_pos.append(i.pos)
-        # ln.append(list_nodes[len(list_nodes) - 1])
-        # car = Car(self.step_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
-        #           self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
-        # self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
 
     def just_test_one_car(self):
         print(list(self.lanes.keys()))
