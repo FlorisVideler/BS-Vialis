@@ -96,3 +96,4 @@ model_params = {
 }
 
 server = ModularServer(Traffic, [traffic_canvas, time_text_element], "Traffic", model_params)
+server.port = 8522
