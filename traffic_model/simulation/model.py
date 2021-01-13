@@ -6,7 +6,8 @@ import os
 
 from mesa import Model
 from mesa.space import ContinuousSpace
-from mesa.time import RandomActivation
+from mesa.time import RandomActivation, SimultaneousActivation, BaseScheduler
+from mesa.datacollection import DataCollector
 
 from .agents import *
 
@@ -28,16 +29,18 @@ class Traffic(Model):
             height=100,
     ):
         self.data = self.load_data(dir_path + r'\data\BOS210.csv')
-        self.step_count = 288002
+        self.step_count = 288000
         self.data_time = self.read_row_col('time')
         self.population = population
-        self.schedule = RandomActivation(self)
+        self.schedule = SimultaneousActivation(self)
         self.space = ContinuousSpace(width, height, True)
         self.placed_agent_count = 0
         self.lanes = self.make_intersection()
         self.make_sensors()
         self.running = True
-        self.just_test_one_car()
+        # self.spawn_cars()
+
+        # self.just_test_one_car()
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
@@ -50,6 +53,43 @@ class Traffic(Model):
         self.schedule.step()
         self.data_time = self.read_row_col('time')
         self.step_count += 1
+
+        if self.step_count % 40 == 0:
+            self.spawn_cars()
+        #
+        # if self.step_count == 288001:
+        #     self.spawn_cars()
+        # if self.step_count == 288002:
+        #     self.spawn_cars()
+        # if self.step_count == 288003:
+        #     self.spawn_cars()
+        # if self.step_count == 288004:
+        #     self.spawn_cars()
+        # if self.step_count == 288005:
+        #     self.spawn_cars()
+        # if self.step_count == 288006:
+        #     self.spawn_cars()
+
+    def spawn_cars(self):
+        # print(list(self.lanes.keys()))
+        lane = random.choice(list(self.lanes.keys()))
+        # lane = '14'
+        ln = []
+        ln_pos = []
+        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
+            'nodes']
+        for i in self.lanes[lane]['in']['nodes']:
+            ln.append(i)
+            ln_pos.append(i.pos)
+        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
+            if i.pos not in ln_pos:
+                ln.append(i)
+                ln_pos.append(i.pos)
+        ln.append(list_nodes[len(list_nodes) - 1])
+        car = Car(self.step_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
+                  self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
+        self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
+        return car
 
     def just_test_one_car(self):
         print(list(self.lanes.keys()))
@@ -149,7 +189,7 @@ class Traffic(Model):
                         x = pos['ref_pos'][0] * self.space.x_max
                         y = pos['ref_pos'][1] * self.space.y_max
                         pos = x, y
-                        agent = Node(self.placed_agent_count, self, pos, False, True, 0, light_dict[lane_id])
+                        agent = Node(self.placed_agent_count, self, pos, False, True, lane_id, light_dict[lane_id])
                         lane_info['conn']['nodes'].append(agent)
                         self.place_agent(agent, pos)
                         if reg_start_node is not None and reg_end_node is None:
