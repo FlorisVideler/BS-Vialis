@@ -68,8 +68,9 @@ class Car(Agent):
         self.passed_light = False
 
         self.acceleration = 0.05722366187130742  # 1.25 km/h
-        self.current_speed = 0
+
         self.max_speed = 2.2889464748522967  # 50km/h
+        self.current_speed = self.max_speed
 
         # 1m = 1.6480414618936536 px
         # 50km/h = 1.3888888888888888 m per step (0.1 s)

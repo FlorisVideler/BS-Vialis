@@ -98,6 +98,7 @@
     {
         "sensorID": "4",
         "name": "014",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [
@@ -226,6 +227,7 @@
     {
         "sensorID": "8",
         "name": "034",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [
@@ -354,6 +356,7 @@
     {
         "sensorID": "12",
         "name": "044",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [
@@ -482,6 +485,7 @@
     {
         "sensorID": "16",
         "name": "054",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [
@@ -610,6 +614,7 @@
     {
         "sensorID": "20",
         "name": "114",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [
@@ -738,6 +743,7 @@
     {
         "sensorID": "24",
         "name": "124",
+        "gen": "True",
         "sensorDeviceType": "inductionLoop",
         "realSensorPosition": [
             [

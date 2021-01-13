@@ -35,9 +35,19 @@ class Traffic(Model):
         self.schedule = SimultaneousActivation(self)
         self.space = ContinuousSpace(width, height, True)
         self.placed_agent_count = 0
+        self.light_dict = {}
         self.lanes = self.make_intersection()
         self.make_sensors()
         self.running = True
+
+        self.active_loops = {
+            '044': 0,
+            '054': 0,
+            '114': 0,
+            '124': 0,
+            '014': 0,
+            '034': 0
+        }
         # self.spawn_cars()
 
         # self.just_test_one_car()
@@ -54,8 +64,7 @@ class Traffic(Model):
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
-        if self.step_count % 40 == 0:
-            self.spawn_cars()
+        self.spawn_cars()
         #
         # if self.step_count == 288001:
         #     self.spawn_cars()
@@ -71,25 +80,54 @@ class Traffic(Model):
         #     self.spawn_cars()
 
     def spawn_cars(self):
-        # print(list(self.lanes.keys()))
-        lane = random.choice(list(self.lanes.keys()))
-        # lane = '14'
-        ln = []
-        ln_pos = []
-        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
-            'nodes']
-        for i in self.lanes[lane]['in']['nodes']:
-            ln.append(i)
-            ln_pos.append(i.pos)
-        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
-            if i.pos not in ln_pos:
-                ln.append(i)
-                ln_pos.append(i.pos)
-        ln.append(list_nodes[len(list_nodes) - 1])
-        car = Car(self.step_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
-                  self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
-        self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
-        return car
+        for loop in self.active_loops.keys():
+            data = self.read_row_col(loop)
+            if self.active_loops[loop]:
+                if data != '|':
+                    self.active_loops[loop] = 0
+            else:
+                if data == '|':
+                    if self.active_loops[loop] == 0:
+                        for sensor in sensor_data:
+                            if sensor['name'] == loop:
+                                lane = sensor['laneID']
+                        ln = []
+                        ln_pos = []
+                        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']
+                        for i in self.lanes[lane]['in']['nodes']:
+                            ln.append(i)
+                            ln_pos.append(i.pos)
+                        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
+                            if i.pos not in ln_pos:
+                                ln.append(i)
+                                ln_pos.append(i.pos)
+                        ln.append(list_nodes[len(list_nodes) - 1])
+                        try:
+                            car = Car(self.placed_agent_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
+                                      self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
+                        except IndexError:
+                            print(self.lanes[lane])
+                            raise IndexError
+                        self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
+                    self.active_loops[loop] += 1
+        # # print(list(self.lanes.keys()))
+        # lane = random.choice(list(self.lanes.keys()))
+        # # lane = '14'
+        # ln = []
+        # ln_pos = []
+        # list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
+        #     'nodes']
+        # for i in self.lanes[lane]['in']['nodes']:
+        #     ln.append(i)
+        #     ln_pos.append(i.pos)
+        # for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
+        #     if i.pos not in ln_pos:
+        #         ln.append(i)
+        #         ln_pos.append(i.pos)
+        # ln.append(list_nodes[len(list_nodes) - 1])
+        # car = Car(self.step_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
+        #           self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
+        # self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
 
     def just_test_one_car(self):
         print(list(self.lanes.keys()))
@@ -112,7 +150,6 @@ class Traffic(Model):
         self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
 
     def make_intersection(self):
-        light_dict = {}
         lanes = {}
         all_lane_nodes = {}
         for lane in data:
@@ -158,7 +195,7 @@ class Traffic(Model):
                             taffic_light = Light(self.placed_agent_count, self, posxy, 0,
                                                  lane['connectsTo']['signalGroup'])
                             self.place_agent(taffic_light, posxy)
-                            light_dict[lane_id] = taffic_light
+                            self.light_dict[lane_id] = taffic_light
                     agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, taffic_light,
                                  connecting_lane)
                     self.place_agent(agent, posxy)
@@ -175,7 +212,7 @@ class Traffic(Model):
                     if start_node and end_node:
                         if stop_line_lane:
                             road_agent = Road(self.placed_agent_count, self, start_node, end_node, lane_id,
-                                              light_dict[lane_id])
+                                              self.light_dict[lane_id])
                         else:
                             road_agent = Road(self.placed_agent_count, self, start_node, end_node, lane_id)
                         self.place_agent(road_agent, road_agent.start_node.pos)
@@ -189,7 +226,7 @@ class Traffic(Model):
                         x = pos['ref_pos'][0] * self.space.x_max
                         y = pos['ref_pos'][1] * self.space.y_max
                         pos = x, y
-                        agent = Node(self.placed_agent_count, self, pos, False, True, lane_id, light_dict[lane_id])
+                        agent = Node(self.placed_agent_count, self, pos, False, True, lane_id, self.light_dict[lane_id])
                         lane_info['conn']['nodes'].append(agent)
                         self.place_agent(agent, pos)
                         if reg_start_node is not None and reg_end_node is None:
@@ -200,7 +237,7 @@ class Traffic(Model):
 
                         if reg_start_node and reg_end_node:
                             road_agent = Road(self.placed_agent_count, self, reg_start_node, reg_end_node,
-                                              f'reg_{lane_id}', light_dict[lane_id])
+                                              f'reg_{lane_id}', self.light_dict[lane_id])
                             self.place_agent(road_agent, reg_start_node.pos)
                             reg_start_node = reg_end_node
                             reg_end_node = None
@@ -221,6 +258,23 @@ class Traffic(Model):
                     1] * self.space.y_max
                 end_pos = sensor['sensorRefPos'][1][0] * self.space.x_max, sensor['sensorRefPos'][1][
                     1] * self.space.y_max
+                if 'gen' in sensor:
+                    averaged = tuple(np.average(np.array([start_pos, end_pos]), axis=0))
+                    sensor_node = Node(self.placed_agent_count, self, averaged, False, False, sensor['laneID'], self.light_dict[sensor['laneID']])
+                    self.place_agent(sensor_node, averaged)
+                    last = 999
+                    nodes_to_remove = []
+                    for i in self.lanes[sensor['laneID']]['in']['nodes']:
+                        if math.dist(averaged, i.pos) < last:
+                            # print(sensor['laneID'], 'removing', i.pos)
+                            nodes_to_remove.append(i)
+                            last = math.dist(averaged, i.pos)
+                        # else:
+                        #     print(sensor['laneID'], 'keeping', i.pos)
+
+                    for on in nodes_to_remove:
+                        self.lanes[sensor['laneID']]['in']['nodes'].remove(on)
+                    self.lanes[sensor['laneID']]['in']['nodes'].insert(0, sensor_node)
                 agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'])
                 self.place_agent(agent, start_pos)
 
