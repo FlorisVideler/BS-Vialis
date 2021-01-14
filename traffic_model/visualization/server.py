@@ -33,7 +33,7 @@ def draw(agent):
 
 def draw_car(car):
     if car.active:
-        return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 8, "h": 8}
+        return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 6, "h": 6}
     else:
         return {}
 
