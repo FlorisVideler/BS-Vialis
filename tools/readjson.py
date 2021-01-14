@@ -3,19 +3,18 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
-# TODO: WTF HAPPEND?????? THIS ISN'T WORKING RN
 
-df = pd.read_csv(r'08-Jan-2021-1318.csv')
-with open('laneset_BOS210.json') as json_file:
-    data_BOS210 = json.load(json_file)
-with open('laneset_BOS211.json') as json_file:
-    data_BOS211 = json.load(json_file)
-with open('sensors_list_BOS210.json') as json_file:
-    sensor_data_BOS210 = json.load(json_file)
-with open('sensors_list_BOS211.json') as json_file:
-    sensor_data_BOS211 = json.load(json_file)
+def normalize(array):
+    min_array = min(array)
+    max_array = max(array)
+    z = []
+    for i in range(len(array)):
+        curr_z = (array[i] - min_array) / (max_array - min_array)
+        z.append(curr_z)
+    return z
 
-def cdt(x):
+
+def convert_time(x):
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
     utc = datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
@@ -27,122 +26,95 @@ def cdt(x):
     return central
 
 
-
-def normalize(array):
-    min_array = min(array)
-    max_array = max(array)
-    z = []
-    for i in range(len(array)):
-        curr_z = (array[i] - min_array) / (max_array - min_array)
-        z.append(curr_z)
-    return z
-
-def normalize_this():
-    all_pos_x, all_pos_y = set_pos()
-    all_pos_x += df_lat
-    all_pos_y += df_lon
-    norm_x = normalize(all_pos_x)
-    norm_y = normalize(all_pos_y)
-    return norm_x, norm_y
-
-def set_pos():
-    all_pos_x = []
-    all_pos_y = []
-    for lane in data_BOS210:
-        if lane['laneAttributes']['type_lane'] == 'vehicle':
-            for pos in lane['nodes']:
-                all_pos_x.append(float(pos['pos'][0]))
-                all_pos_y.append(float(pos['pos'][1]))
-            for pos in lane['regional']:
-                all_pos_x.append(float(pos['pos'][0]))
-                all_pos_y.append(float(pos['pos'][1]))
-
-    for lane in data_BOS211:
-        if lane['laneAttributes']['type_lane'] == 'vehicle':
-            for pos in lane['nodes']:
-                all_pos_x.append(float(pos['pos'][0]))
-                all_pos_y.append(float(pos['pos'][1]))
-            for pos in lane['regional']:
-                all_pos_x.append(float(pos['pos'][0]))
-                all_pos_y.append(float(pos['pos'][1]))
-
-    for sensor in sensor_data_BOS210:
-        if sensor['sensorDeviceType'] == 'inductionLoop':
-            all_pos_x.append(float(sensor['realSensorPosition'][0][0]))
-            all_pos_x.append(float(sensor['realSensorPosition'][1][0]))
-            all_pos_y.append(float(sensor['realSensorPosition'][0][1]))
-            all_pos_y.append(float(sensor['realSensorPosition'][1][1]))
-
-    for sensor in sensor_data_BOS211:
-        if sensor['sensorDeviceType'] == 'inductionLoop':
-            all_pos_x.append(float(sensor['realSensorPosition'][0][0]))
-            all_pos_x.append(float(sensor['realSensorPosition'][1][0]))
-            all_pos_y.append(float(sensor['realSensorPosition'][0][1]))
-            all_pos_y.append(float(sensor['realSensorPosition'][1][1]))
-
-    return all_pos_x, all_pos_y
+def load_data(path):
+    with open(path) as json_file:
+        return json.load(json_file)
 
 
-df['time'] = df['time'].apply(cdt)
-df_time = list(df['time'])
-df_lat = list(df['lat'])
-df_lon = list(df['lon'])
-norm_x, norm_y = normalize_this()
-def dumplaneset():
-    i = 0
-    for lane in data_BOS210:
-        if lane['laneAttributes']['type_lane'] == 'vehicle':
-            for pos in lane['nodes']:
-                pos['ref_pos'] = [norm_x[i], norm_y[i]]
-                i += 1
-            for pos in lane['regional']:
-                pos['ref_pos'] = [norm_x[i], norm_y[i]]
-                i += 1
-
-    for lane in data_BOS211:
-        if lane['laneAttributes']['type_lane'] == 'vehicle':
-            for pos in lane['nodes']:
-                pos['ref_pos'] = [norm_x[i], norm_y[i]]
-                i += 1
-            for pos in lane['regional']:
-                pos['ref_pos'] = [norm_x[i], norm_y[i]]
-                i += 1
-
-    with open('laneset_BOS210_done.json', 'w') as fp:
-        json.dump(data_BOS210, fp, indent=4)
-
-    with open('laneset_BOS211_done.json', 'w') as fr:
-        json.dump(data_BOS211, fr, indent=4)
+def write_data(path, data):
+    with open(path, 'w') as fp:
+        json.dump(data, fp, indent=4)
 
 
-def dumpsensorset():
-    i = 0
-    for sensor in sensor_data_BOS210:
-        if sensor['sensorDeviceType'] == 'inductionLoop':
-            sensor['sensorRefPos'] = [[norm_x[i], norm_y[i]], [norm_x[i + 1], norm_y[i + 1]]]
-            i += 2
+def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, output='default'):
+    all_x = []
+    all_y = []
+    all_lanes = []
+    all_sensors = []
+    all_routes = []
+    total_df_len = 0
+    index = 0
+    # Add the lane positions to the global list to normalize
+    for lanes_file in lanes_to_process:
+        lanes_data = load_data(lanes_file)
+        all_lanes.append(lanes_data)
+        for lane in lanes_data:
+            if lane['laneAttributes']['type_lane'] == 'vehicle':
+                for pos in lane['nodes']:
+                    all_x.append(float(pos['pos'][0]))
+                    all_y.append(float(pos['pos'][1]))
+                for pos in lane['regional']:
+                    all_x.append(float(pos['pos'][0]))
+                    all_y.append(float(pos['pos'][1]))
+    # Add the sensor positions to the global list to normalize
+    for sensors_file in sensors_to_process:
+        sensors_data = load_data(sensors_file)
+        all_sensors.append(sensors_data)
+        for sensor in sensors_data:
+            if sensor['sensorDeviceType'] == 'inductionLoop':
+                all_x.append(float(sensor['realSensorPosition'][0][0]))
+                all_x.append(float(sensor['realSensorPosition'][1][0]))
+                all_y.append(float(sensor['realSensorPosition'][0][1]))
+                all_y.append(float(sensor['realSensorPosition'][1][1]))
 
-    for sensor in sensor_data_BOS211:
-        if sensor['sensorDeviceType'] == 'inductionLoop':
-            sensor['sensorRefPos'] = [[norm_x[i], norm_y[i]], [norm_x[i + 1], norm_y[i + 1]]]
-            i += 2
+    # Add the positions of Niels's car if needed
+    if niels:
+        for route_number in niels:
+            df_route = pd.read_csv(f'car_data/route{route_number}.csv')
+            df_route['time'] = df_route['time'].apply(convert_time)
+            total_df_len += len(df_route['time'])
+            all_routes.append(df_route)
+            all_x += list(df_route['lat'])
+            all_y += list(df_route['lon'])
 
-    with open('sensors_list_BOS210_done.json', 'w') as fp:
-        json.dump(sensor_data_BOS210, fp, indent=4)
+    # Normalize all the positions
+    norm_x = normalize(all_x)
+    norm_y = normalize(all_y)
 
-    with open('sensors_list_BOS211_done.json', 'w') as fp:
-        json.dump(sensor_data_BOS211, fp, indent=4)
+    # Now put the data back in place
+    # Get the lane positions
+    for lanes_data in all_lanes:
+        for lane in lanes_data:
+            if lane['laneAttributes']['type_lane'] == 'vehicle':
+                for pos in lane['nodes']:
+                    pos['ref_pos'] = [norm_x[index], norm_y[index]]
+                    index += 1
+                for pos in lane['regional']:
+                    pos['ref_pos'] = [norm_x[index], norm_y[index]]
+                    index += 1
+        write_data(f'lane_done_{lanes_data[0]["intersectionName"]}.json', lanes_data)
 
-def dump_geo():
-    json_obj = []
+    # Same for the sensors
+    for sensors_data in all_sensors:
+        for sensor in sensors_data:
+            if sensor['sensorDeviceType'] == 'inductionLoop':
+                sensor['sensorRefPos'] = [[norm_x[index], norm_y[index]], [norm_x[index + 1], norm_y[index + 1]]]
+                index += 2
+        write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data)
 
-    df_lat = norm_x[-len(df_time):]
-    df_lon = norm_y[-len(df_time):]
+    df_lat = norm_x[-total_df_len:]
+    df_lon = norm_y[-total_df_len:]
+    index = 0
+    for route_index in range(len(all_routes)):
+        json_obj = []
+        for i in range(len(all_routes[route_index]['time'])):
+            json_obj.append([df_lat[index], df_lon[index]])
+            index += 1
+        write_data(f'route{route_index}.json', json_obj)
 
 
-    for i in range(len(df_time)):
-        json_obj.append([df_lat[i], df_lon[i]])
+lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
+sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
+geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-
-    with open('geodata.json', 'w') as fp:
-        json.dump(json_obj, fp, indent=4)
+process_lanes_and_sensors(lanes, sensors, geo_routes)
