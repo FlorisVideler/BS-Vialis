@@ -197,6 +197,7 @@ class Sensor(Agent):
             sensor_id: str,
             lane_id: str,
             distance_from_light: int,
+            intersection_id: str,
             agent_type: str = "sensor"
     ):
         super().__init__(unique_id, model)
@@ -209,6 +210,7 @@ class Sensor(Agent):
         self.lane_id = lane_id
         self.distance_from_light = distance_from_light
         self.light = self.get_light_from_lane()
+        self.intersection_id = intersection_id
 
     def get_light_from_lane(self):
         if self.lane_id in self.model.lanes:
@@ -216,7 +218,7 @@ class Sensor(Agent):
         return None
 
     def step(self):
-        data_state = self.model.read_row_col(self.sensor_id)
+        data_state = self.model.read_row_col(self.intersection_id, self.sensor_id)
         if data_state != "|":
             self.state = 0
         else:
@@ -231,6 +233,7 @@ class Light(Agent):
             pos: tuple,
             state: int,
             light_id: str,
+            intersection_id: str,
             agent_type: str = 'light'
     ):
         super().__init__(unique_id, model)
@@ -238,9 +241,10 @@ class Light(Agent):
         self.state = state
         self.agent_type = agent_type
         self.light_id = light_id
+        self.intersection_id = intersection_id
 
     def step(self):
-        data_state = self.model.read_row_col(self.light_id)
+        data_state = self.model.read_row_col(self.intersection_id, self.light_id)
         if data_state == '#':
             self.state = 2
         elif data_state == 'Z':

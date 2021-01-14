@@ -9,11 +9,21 @@ from mesa.time import RandomActivation
 
 from .agents import *
 
-with open('visualization/data/lanesetporc.json') as json_file:
-    data = json.load(json_file)
+with open('visualization/data/laneset_BOS210_done.json') as json_file:
+    data_BOS210 = json.load(json_file)
 
-with open('visualization/data/sensorproc.json') as json_file:
-    sensor_data = json.load(json_file)
+with open('visualization/data/laneset_BOS211_done.json') as json_file:
+    data_BOS211 = json.load(json_file)
+
+data = data_BOS210 + data_BOS211
+
+with open('visualization/data/sensors_list_BOS210_done.json') as json_file:
+    sensors_list_BOS210 = json.load(json_file)
+
+with open('visualization/data/sensors_list_BOS211_done.json') as json_file:
+    sensors_list_BOS211 = json.load(json_file)
+
+sensor_data = sensors_list_BOS210 + sensors_list_BOS211
 
 
 class Traffic(Model):
@@ -23,11 +33,11 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.data = self.load_data('visualization/data/BOS210_20210108_20210112.csv')
+        self.data = self.load_data({'BOS210': 'visualization/data/BOS210.csv', 'BOS211': 'visualization/data/BOS211.csv'})
         self.geo_data = self.load_geo_data()
         self.step_count = 433572
         self.real_step_count = 0
-        self.data_time = self.read_row_col('time')
+        self.data_time = self.read_row_col('BOS210', 'time')
         self.population = population
         self.schedule = RandomActivation(self)
         self.space = ContinuousSpace(width, height, True)
@@ -38,11 +48,14 @@ class Traffic(Model):
         self.niels_car()
 
     def load_data(self, path, sep=';'):
-        df = pd.read_csv(path, sep=sep)
-        return df
+        data_dict = {}
+        for file in path:
+            data_dict[file] = pd.read_csv(path[file], sep=sep)
+        return data_dict
 
-    def read_row_col(self, col):
-        return self.data[col][self.step_count]
+    def read_row_col(self, intersection, col):
+        return self.data[intersection][col][self.step_count]
+        # return self.data[col][self.step_count]
 
     def load_geo_data(self):
         with open('visualization/data/geodata.json') as json_file:
@@ -50,7 +63,7 @@ class Traffic(Model):
 
     def step(self):
         self.schedule.step()
-        self.data_time = self.read_row_col('time')
+        self.data_time = self.read_row_col('BOS210', 'time')
         self.step_count += 1
         self.real_step_count += 1
 
@@ -125,7 +138,7 @@ class Traffic(Model):
                         node_count += 1
                         if stop_line_lane:
                             taffic_light = Light(self.placed_agent_count, self, posxy, 0,
-                                                 lane['connectsTo']['signalGroup'])
+                                                 lane['connectsTo']['signalGroup'], lane['intersectionName'])
                             self.place_agent(taffic_light, posxy)
                             light_dict[lane_id] = taffic_light
                     agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, taffic_light,
@@ -190,7 +203,7 @@ class Traffic(Model):
                     1] * self.space.y_max
                 end_pos = sensor['sensorRefPos'][1][0] * self.space.x_max, sensor['sensorRefPos'][1][
                     1] * self.space.y_max
-                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'])
+                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'], sensor['intersectionName'])
                 self.place_agent(agent, start_pos)
 
     def place_agent(self, agent, pos):
