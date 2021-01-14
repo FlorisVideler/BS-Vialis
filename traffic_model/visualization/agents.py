@@ -126,18 +126,21 @@ class NielsCar(Agent):
         self.path = []
 
     def step(self):
-        next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_pos, self.dist, self.speed)
-        if next_distance_to_next_node <= 0:
-            print('next node')
-            self.index += 1
-            self.pos = self.next_pos
-            self.next_pos = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
-            self.dist = abs(math.dist(self.pos, self.next_pos))
-            self.speed = self.dist / 10
+        try:
             next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_pos, self.dist, self.speed)
-            self.speed = next_distance_to_next_node / 10
-        self.pos = next_pos
-        self.dist = next_distance_to_next_node
+            if next_distance_to_next_node <= 0:
+                print('next node')
+                self.index += 1
+                self.pos = self.next_pos
+                self.next_pos = self.geo_data[self.index][0] * self.model.space.x_max, self.geo_data[self.index][1] * self.model.space.y_max
+                self.dist = abs(math.dist(self.pos, self.next_pos))
+                self.speed = self.dist / 10
+                next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_pos, self.dist, self.speed)
+                self.speed = next_distance_to_next_node / 10
+            self.pos = next_pos
+            self.dist = next_distance_to_next_node
+        except IndexError:
+            print('Car is done')
 
         # if self.dist <= 0:
         #     self.index += 1
