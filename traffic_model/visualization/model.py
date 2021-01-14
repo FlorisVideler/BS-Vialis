@@ -9,24 +9,25 @@ from mesa.time import RandomActivation
 
 from .agents import *
 
-with open('visualization/data/laneset_BOS210_done.json') as json_file:
+with open('visualization/data/lane_done_BOS210.json') as json_file:
     data_BOS210 = json.load(json_file)
 
-with open('visualization/data/laneset_BOS211_done.json') as json_file:
+with open('visualization/data/lane_done_BOS211.json') as json_file:
     data_BOS211 = json.load(json_file)
 
 data = data_BOS210 + data_BOS211
 
-with open('visualization/data/sensors_list_BOS210_done.json') as json_file:
+with open('visualization/data/sensors_done_BOS210.json') as json_file:
     sensors_list_BOS210 = json.load(json_file)
 
-with open('visualization/data/sensors_list_BOS211_done.json') as json_file:
+with open('visualization/data/sensors_done_BOS211.json') as json_file:
     sensors_list_BOS211 = json.load(json_file)
 
 sensor_data = sensors_list_BOS210 + sensors_list_BOS211
 
 
 class Traffic(Model):
+    # TODO: CHECK DEZE TIJDEN?!?!?!?!??!?!?!??!?!?!??!?!
     route_dict = {
             0: 433572,
             1: 435312,
