@@ -139,7 +139,6 @@ def dump_geo():
 
 
     for i in range(len(df_time)):
-        time_obj = {df_time[i]: [df_lat[i], df_lon[i]]}
         json_obj.append([df_lat[i], df_lon[i]])
 
 
