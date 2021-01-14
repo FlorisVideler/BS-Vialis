@@ -27,18 +27,31 @@ sensor_data = sensors_list_BOS210 + sensors_list_BOS211
 
 
 class Traffic(Model):
+    route_dict = {
+            0: 433572,
+            1: 435312,
+            2: 438432,
+            3: 440812,
+            4: 441912,
+            5: 463572,
+            6: 464832,
+            7: 467242,
+            8: 470312,
+            9: 472632,
+            10: 478652
+        }
+
     def __init__(
             self,
-            population=100,
+            route=0,
             width=100,
             height=100,
     ):
         self.data = self.load_data({'BOS210': 'visualization/data/BOS210.csv', 'BOS211': 'visualization/data/BOS211.csv'})
-        self.geo_data = self.load_geo_data()
-        self.step_count = 433572
+        self.geo_data = self.load_geo_data(route)
+        self.step_count = self.route_dict[route]
         self.real_step_count = 0
         self.data_time = self.read_row_col('BOS210', 'time')
-        self.population = population
         self.schedule = RandomActivation(self)
         self.space = ContinuousSpace(width, height, True)
         self.placed_agent_count = 0
@@ -57,8 +70,8 @@ class Traffic(Model):
         return self.data[intersection][col][self.step_count]
         # return self.data[col][self.step_count]
 
-    def load_geo_data(self):
-        with open('visualization/data/geodata.json') as json_file:
+    def load_geo_data(self, route):
+        with open(f'visualization/data/route{route}.json') as json_file:
             return json.load(json_file)
 
     def step(self):

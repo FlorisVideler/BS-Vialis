@@ -3,6 +3,8 @@ from mesa.visualization.ModularVisualization import ModularServer
 from .model import Traffic
 from .SimpleContinuousModule import SimpleCanvas
 from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
+from mesa.visualization.UserParam import UserSettableParameter
+
 
 
 class TimeText(TextElement):
@@ -90,7 +92,12 @@ def draw_light(light):
 traffic_canvas = SimpleCanvas(draw, 750, 750)
 time_text_element = TimeText()
 model_params = {
-    "population": 100,
+    "route": UserSettableParameter(
+        "choice",
+        "Route",
+        value=0,
+        choices=list(Traffic.route_dict.keys()),
+    ),
     "width": 750,
     "height": 750,
 }

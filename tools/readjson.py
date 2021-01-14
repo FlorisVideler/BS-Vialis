@@ -4,13 +4,13 @@ from datetime import datetime
 from dateutil import tz
 
 df = pd.read_csv(r'08-Jan-2021-1318.csv')
-with open('C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS210.json') as json_file:
+with open('laneset_BOS210.json') as json_file:
     data_BOS210 = json.load(json_file)
-with open('C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS211.json') as json_file:
+with open('laneset_BOS211.json') as json_file:
     data_BOS211 = json.load(json_file)
-with open('C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS210.json') as json_file:
+with open('sensors_list_BOS210.json') as json_file:
     sensor_data_BOS210 = json.load(json_file)
-with open('C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS211.json') as json_file:
+with open('sensors_list_BOS211.json') as json_file:
     sensor_data_BOS211 = json.load(json_file)
 
 def cdt(x):
