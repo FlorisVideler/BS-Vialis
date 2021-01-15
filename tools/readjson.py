@@ -113,10 +113,9 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
         write_data(f'route{route_index}.json', json_obj)
 
 
-lanes = ['C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS210.json', 'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS211.json']
-sensors = ['C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS210.json', 'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS211.json']
+lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
+sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
 geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-
 
 
 if __name__ == '__main__':
