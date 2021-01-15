@@ -20,12 +20,12 @@ class TestAgents(unittest.TestCase):
         subject_path = 'laneset_BOS210.json'
         try:
             with open(subject_path) as json_file:
-                x = json.load(json_file)
+                json.load(json_file)
         except:
             p2 = 0
         else:
             p2 = 1
-        self.assertEqual(p1,p2,"Pathing failed")
+        self.assertEqual(p1,p2,"Pathing failed, path does not exist")
 
 
 
