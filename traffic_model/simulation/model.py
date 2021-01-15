@@ -6,9 +6,7 @@ import os
 
 from mesa import Model
 from mesa.space import ContinuousSpace
-from mesa.time import RandomActivation, SimultaneousActivation, BaseScheduler
-from mesa.datacollection import DataCollector
-
+from mesa.time import SimultaneousActivation
 from .agents import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -255,11 +253,8 @@ class Traffic(Model):
                     nodes_to_remove = []
                     for i in self.lanes[sensor['laneID']]['in']['nodes']:
                         if math.dist(averaged, i.pos) < last:
-                            # print(sensor['laneID'], 'removing', i.pos)
                             nodes_to_remove.append(i)
                             last = math.dist(averaged, i.pos)
-                        # else:
-                        #     print(sensor['laneID'], 'keeping', i.pos)
 
                     for on in nodes_to_remove:
                         self.lanes[sensor['laneID']]['in']['nodes'].remove(on)

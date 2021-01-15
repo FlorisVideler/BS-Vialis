@@ -74,9 +74,10 @@ class Car(Agent):
         self.max_speed = 2.2889464748522967  # 50km/h
         self.current_speed = self.max_speed
 
-        # 1m = 1.6480414618936536 px
-        # 50km/h = 1.3888888888888888 m per step (0.1 s)
-        # 50km/h =  2.2889464748522967 px per step
+        ''' 1m = 1.6480414618936536 px
+            50km/h = 1.3888888888888888 m per step (0.1 s)
+            50km/h =  2.2889464748522967 px per step
+        '''
 
     def get_next_car(self, radius):
         neighbors = self.model.space.get_neighbors(self.pos, radius, False)

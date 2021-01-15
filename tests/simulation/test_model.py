@@ -1,6 +1,5 @@
 import unittest
 import json
-import datetime
 from traffic_model.simulation.model import Traffic
 
 class MyTestCase(unittest.TestCase):
