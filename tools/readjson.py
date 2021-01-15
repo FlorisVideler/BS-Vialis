@@ -70,7 +70,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     # Add the positions of Niels's car if needed
     if niels:
         for route_number in niels:
-            df_route = pd.read_csv(f'car_data/route{route_number}.csv')
+            df_route = pd.read_csv(f'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/car_data/route{route_number}.csv')
             df_route['time'] = df_route['time'].apply(convert_time)
             total_df_len += len(df_route['time'])
             all_routes.append(df_route)
@@ -113,8 +113,11 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
         write_data(f'route{route_index}.json', json_obj)
 
 
-lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
-sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
+lanes = ['C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS210.json', 'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/laneset_BOS211.json']
+sensors = ['C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS210.json', 'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/sensors_list_BOS211.json']
 geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-process_lanes_and_sensors(lanes, sensors, geo_routes)
+
+
+if __name__ == '__main__':
+    process_lanes_and_sensors(lanes, sensors, geo_routes)

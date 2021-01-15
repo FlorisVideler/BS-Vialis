@@ -179,11 +179,11 @@ class Traffic(Model):
                     if node_count == 0:
                         node_count += 1
                         if stop_line_lane:
-                            taffic_light = Light(self.placed_agent_count, self, posxy, 0,
+                            traffic_light = Light(self.placed_agent_count, self, posxy, 0,
                                                  lane['connectsTo']['signalGroup'])
-                            self.place_agent(taffic_light, posxy)
-                            self.light_dict[lane_id] = taffic_light
-                    agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, taffic_light,
+                            self.place_agent(traffic_light, posxy)
+                            self.light_dict[lane_id] = traffic_light
+                    agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, traffic_light,
                                  connecting_lane)
                     self.place_agent(agent, posxy)
                     all_lane_nodes[lane_id].append(agent)

@@ -27,9 +27,6 @@ class TestAgents(unittest.TestCase):
             p2 = 1
         self.assertEqual(p1,p2,"Pathing failed, path does not exist")
 
-
-
 if __name__ == '__main__':
     unittest.main()
-p1 = tr.convert_time("2021-01-08T12:08:38Z")
-print(p1)
+
