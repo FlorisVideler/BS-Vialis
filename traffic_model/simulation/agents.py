@@ -1,5 +1,6 @@
 from mesa import Agent
 import math
+import numpy as np
 
 
 def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float):
@@ -66,6 +67,7 @@ class Car(Agent):
         self.next_pos = None
         self.active = True
         self.passed_light = False
+        self.steps_active = 0
 
         self.acceleration = 0.05722366187130742  # 1.25 km/h
 
@@ -96,7 +98,6 @@ class Car(Agent):
     def get_distance_to_light(self):
         return math.dist(self.pos, self.lane[0].light.pos), self.lane[0].light.state
 
-
     def move_agent(self, new_pos):
         self.pos = new_pos
         self.model.space.move_agent(self, new_pos)
@@ -109,6 +110,7 @@ class Car(Agent):
         return True
 
     def stop_car(self):
+        self.model.finished_car_steps.append(self.steps_active)
         self.active = False
 
     def red_light(self):
@@ -124,43 +126,44 @@ class Car(Agent):
         self.move_agent(self.next_pos)
 
     def step(self):
-        print(self.get_distance_to_light())
+        # print(self.get_distance_to_light())
         # print(self.unique_id, self.current_node.lane_id, self.next_node.lane_id)
-        if not self.red_light():
-            dist_to_light = self.get_distance_to_light()
-            if dist_to_light[0] <= 50 and dist_to_light[1] == 0:
-                self.current_speed -= self.acceleration
-            else:
-                if self.current_speed < self.max_speed:
-                    self.current_speed += self.acceleration
+        if self.active:
+            self.steps_active += 1
+            if not self.red_light():
+                dist_to_light = self.get_distance_to_light()
+                if dist_to_light[0] <= 100 and dist_to_light[1] == 0:
+                    self.current_speed -= (self.acceleration / 2)
+                else:
+                    if self.current_speed < self.max_speed:
+                        self.current_speed += self.acceleration
 
-            next_car = self.get_next_car(60)
-            if next_car:
-                if next_car[1] <= self.current_speed + 15:
-                    self.current_speed = next_car[1] - 10  # Hier moet nog een getal vanaf
+                next_car = self.get_next_car(60)
+                if next_car:
+                    if next_car[1] <= self.current_speed + 15:
+                        self.current_speed = next_car[1] - 15  # Hier moet nog een getal vanaf
 
-            print(self.get_distance_to_light())
+                # print(self.get_distance_to_light())
 
-
-            if self.current_speed < 0:
-                self.current_speed = 0
-            next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                  self.distance_to_next_node, self.current_speed)
-            if next_distance_to_next_node < 0:
-                if not self.get_next_node():
-                    self.stop_car()
-                    return
-                self.node_index += 1
-                self.move_agent(self.current_node.pos)
-                self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
+                if self.current_speed < 0:
+                    self.current_speed = 0
                 next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                      self.distance_to_next_node,
-                                                                      abs(next_distance_to_next_node))
-            self.next_pos = next_pos
-            self.distance_to_next_node = next_distance_to_next_node
-        else:
-            self.current_speed = 0
-            print("RED LIGHT")
+                                                                      self.distance_to_next_node, self.current_speed)
+                if next_distance_to_next_node < 0:
+                    if not self.get_next_node():
+                        self.stop_car()
+                        return
+                    self.node_index += 1
+                    self.move_agent(self.current_node.pos)
+                    self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
+                    next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
+                                                                          self.distance_to_next_node,
+                                                                          abs(next_distance_to_next_node))
+                self.next_pos = next_pos
+                self.distance_to_next_node = next_distance_to_next_node
+            else:
+                self.current_speed = 0
+            # print("RED LIGHT")
         # print('speed', self.current_speed)
 
 
@@ -209,17 +212,33 @@ class Sensor(Agent):
         self.lane_id = lane_id
         self.distance_from_light = distance_from_light
         self.light = self.get_light_from_lane()
+        self.car_on_sensor_position = False
 
     def get_light_from_lane(self):
         if self.lane_id in self.model.lanes:
             return self.model.lanes[self.lane_id]['in']['nodes'][0].light
         return None
 
+    def car_on_sensor(self, threshold: int = 8):
+        neighbors = self.model.space.get_neighbors(np.average(np.array([self.start_pos, self.end_pos]), axis=0), 10,
+                                                   True)
+        for car in neighbors:
+            if car.agent_type == 'car':
+                if car.active:
+                    if math.dist(tuple(np.average(np.array([self.start_pos, self.end_pos]), axis=0)),
+                                 car.pos) <= threshold and car.next_node.lane_id == self.lane_id:
+                        self.model.sensor_on_car_found += 1
+                        return True
+        self.model.sensor_on_no_car += 1
+        return False
+
     def step(self):
         data_state = self.model.read_row_col(self.sensor_id)
         if data_state != "|":
             self.state = 0
         else:
+            if self.sensor_id not in self.model.active_loops.keys():
+                self.car_on_sensor()
             self.state = 1
 
 

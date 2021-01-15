@@ -40,6 +40,22 @@ class Traffic(Model):
         self.make_sensors()
         self.running = True
 
+        # Car stats tracker
+        self.finished_car_steps = []
+        self.avg_car_steps = 0
+
+        self.finished_car_wait = []
+        self.avg_car_wait = 0
+
+
+        # Sensor accuracy tracker
+        self.sensor_on_no_car = 0
+        self.sensor_on_car_found = 0
+
+        # Data collector
+        self.datacollector = DataCollector(
+            model_reporters={'avg_car_steps': 'avg_car_steps', 'avg_car_wait': 'avg_car_wait'})
+
         self.active_loops = {
             '044': 0,
             '054': 0,
@@ -48,6 +64,12 @@ class Traffic(Model):
             '014': 0,
             '034': 0
         }
+
+    def calculate_avg_car_stats(self):
+        if len(self.finished_car_steps) > 0:
+            self.avg_car_steps = sum(self.finished_car_steps) / len(self.finished_car_steps)
+        if len(self.finished_car_wait) > 0:
+            self.avg_car_wait = sum(self.finished_car_wait) / len(self.finished_car_wait)
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
@@ -61,7 +83,12 @@ class Traffic(Model):
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
+        if self.step_count % 100 == 0 :
+            print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
+
         self.spawn_cars()
+        self.calculate_avg_car_stats()
+        self.datacollector.collect(self)
 
     def spawn_cars(self):
         for loop in self.active_loops.keys():
