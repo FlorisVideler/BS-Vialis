@@ -4,6 +4,7 @@ import random
 import os
 
 from mesa import Model
+from mesa.datacollection import DataCollector
 from mesa.space import ContinuousSpace
 from mesa.time import SimultaneousActivation
 from .agents import *
