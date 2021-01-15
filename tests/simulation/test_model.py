@@ -28,7 +28,7 @@ class MyTestCase(unittest.TestCase):
         test_instance = Traffic()
         p1 = test_instance.read_row_col('time')
         p2 = '02-11-2020 08:00:00.0'
-        #omdat onze eigen eerste entry om 8 uur is zou dit het resultaat moeten zijn
+        #Omdat onze eigen eerste entry om 8 uur is zou dit het resultaat moeten zijn
         self.assertEqual(p1,p2)
 
 
