@@ -122,7 +122,8 @@ class Traffic(Model):
                                     break
                             to_replace.append([index, np.round(increase_info), orange_index - index])
                         streak = 0
-                to_replace.pop()
+                if len(to_replace) > 0:
+                    to_replace.pop()
                 for i in to_replace:
                     self.data.loc[i[0]:i[0] + i[1], light] = '#'
                     self.data.loc[i[0] + i[1]: i[0] + i[1] + i[2], light] = 'Z'
