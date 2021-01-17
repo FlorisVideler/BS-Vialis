@@ -10,13 +10,31 @@ from mesa.time import SimultaneousActivation
 from .agents import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print('dp', dir_path)
 
 with open(dir_path + r'\data\lanesetporc.json') as json_file:
     data = json.load(json_file)
 
 with open(dir_path + r'\data\sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
+
+# def calculate_avg_car_stats(model):
+#     if len(model.finished_car_steps) > 0:
+#         return sum(model.finished_car_steps) / len(model.finished_car_steps)
+#     if len(model.finished_car_wait) > 0:
+#         return sum(model.finished_car_wait) / len(model.finished_car_wait)
+
+def finished_car_steps(model):
+    if len(model.finished_car_steps) > 0:
+        return sum(model.finished_car_steps) / len(model.finished_car_steps)
+    else:
+        return 0
+
+def finished_car_wait(model):
+    if len(model.finished_car_wait) > 0:
+        return sum(model.finished_car_wait) / len(model.finished_car_wait)
+    else:
+        return 0
+
 
 
 class Traffic(Model):
@@ -68,7 +86,7 @@ class Traffic(Model):
 
         # Data collector
         self.datacollector = DataCollector(
-            model_reporters={'avg_car_steps': 'avg_car_steps', 'avg_car_wait': 'avg_car_wait'})
+            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_steps})
 
         self.active_loops = {
             '044': 0,
@@ -78,12 +96,6 @@ class Traffic(Model):
             '014': 0,
             '034': 0
         }
-
-    def calculate_avg_car_stats(self):
-        if len(self.finished_car_steps) > 0:
-            self.avg_car_steps = sum(self.finished_car_steps) / len(self.finished_car_steps)
-        if len(self.finished_car_wait) > 0:
-            self.avg_car_wait = sum(self.finished_car_wait) / len(self.finished_car_wait)
 
     def load_data(self, path):
         df = pd.read_csv(path, sep=';')
@@ -122,7 +134,6 @@ class Traffic(Model):
                     self.data.loc[i[0] + i[1]: i[0] + i[1] + i[2], light] = 'Z'
 
     def step(self):
-        self.schedule.step()
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
@@ -130,8 +141,8 @@ class Traffic(Model):
         #     print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
 
         self.spawn_cars()
-        self.calculate_avg_car_stats()
         self.datacollector.collect(self)
+        self.schedule.step()
 
     def spawn_cars(self):
         for loop in self.active_loops.keys():
