@@ -70,7 +70,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     # Add the positions of Niels's car if needed
     if niels:
         for route_number in niels:
-            df_route = pd.read_csv(f'C:/Users/jaspe/Downloads/Unity/BS-Vialis/tools/car_data/route{route_number}.csv')
+            df_route = pd.read_csv(f'car_data/route{route_number}.csv')
             df_route['time'] = df_route['time'].apply(convert_time)
             total_df_len += len(df_route['time'])
             all_routes.append(df_route)
@@ -92,7 +92,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
                 for pos in lane['regional']:
                     pos['ref_pos'] = [norm_x[index], norm_y[index]]
                     index += 1
-        write_data(f'lane_done_{lanes_data[0]["intersectionName"]}.json', lanes_data)
+        write_data(f'output/lane_done_{lanes_data[0]["intersectionName"]}.json', lanes_data)
 
     # Same for the sensors
     for sensors_data in all_sensors:
@@ -100,7 +100,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
             if sensor['sensorDeviceType'] == 'inductionLoop':
                 sensor['sensorRefPos'] = [[norm_x[index], norm_y[index]], [norm_x[index + 1], norm_y[index + 1]]]
                 index += 2
-        write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data)
+        write_data(f'output/sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data)
 
     df_lat = norm_x[-total_df_len:]
     df_lon = norm_y[-total_df_len:]
@@ -110,11 +110,11 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
         for i in range(len(all_routes[route_index]['time'])):
             json_obj.append([df_lat[index], df_lon[index]])
             index += 1
-        write_data(f'route{route_index}.json', json_obj)
+        write_data(f'output/route{route_index}.json', json_obj)
 
 
-lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
-sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
+lanes = ['output/laneset_BOS210.json', 'output/laneset_BOS211.json']
+sensors = ['output/sensors_list_BOS210.json', 'output/sensors_list_BOS211.json']
 geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
 
