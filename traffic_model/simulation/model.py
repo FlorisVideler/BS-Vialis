@@ -22,14 +22,19 @@ with open(dir_path + r'\data\sensorproc.json') as json_file:
 class Traffic(Model):
     def __init__(
             self,
-            population=100,
+            light_11=0,
+            light_12=0,
+            light_01=0,
+            light_03=0,
+            light_41=0,
+            light_04=0,
+            light_05=0,
             width=100,
             height=100,
     ):
         self.data = self.load_data(dir_path + r'\data\BOS210.csv')
         self.step_count = 288000
         self.data_time = self.read_row_col('time')
-        self.population = population
         self.schedule = SimultaneousActivation(self)
         self.space = ContinuousSpace(width, height, True)
         self.placed_agent_count = 0
@@ -38,13 +43,24 @@ class Traffic(Model):
         self.make_sensors()
         self.running = True
 
+        # Traffic light setting
+        light_setting = {
+            '11': light_11,
+            '12': light_12,
+            '01': light_01,
+            '03': light_03,
+            '41': light_41,
+            '04': light_04,
+            '05': light_05
+        }
+        self.manipulate_traffic_light_data(light_setting)
+
         # Car stats tracker
         self.finished_car_steps = []
         self.avg_car_steps = 0
 
         self.finished_car_wait = []
         self.avg_car_wait = 0
-
 
         # Sensor accuracy tracker
         self.sensor_on_no_car = 0
@@ -76,13 +92,42 @@ class Traffic(Model):
     def read_row_col(self, col):
         return self.data[col][self.step_count]
 
+    def increase_by(self, value_to_increase, percent):
+        return value_to_increase / 100 * percent
+
+    def manipulate_traffic_light_data(self, lights):
+        for light in lights.keys():
+            if lights[light] > 0:
+                streak = 0
+                to_replace = []
+                for index, value in enumerate(self.data[light]):
+                    if value == "#":
+                        streak += 1
+                    else:
+                        if streak > 0:
+                            increase_info = self.increase_by(streak, lights[light])
+                            orange_index = index
+                            orange_value = value
+                            while orange_value == 'Z':
+                                orange_index += 1
+                                try:
+                                    orange_value = self.data[light][orange_index]
+                                except:
+                                    break
+                            to_replace.append([index, np.round(increase_info), orange_index - index])
+                        streak = 0
+                to_replace.pop()
+                for i in to_replace:
+                    self.data.loc[i[0]:i[0] + i[1], light] = '#'
+                    self.data.loc[i[0] + i[1]: i[0] + i[1] + i[2], light] = 'Z'
+
     def step(self):
         self.schedule.step()
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
-        if self.step_count % 100 == 0 :
-            print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
+        # if self.step_count % 100 == 0:
+        #     print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
 
         self.spawn_cars()
         self.calculate_avg_car_stats()
@@ -102,7 +147,8 @@ class Traffic(Model):
                                 lane = sensor['laneID']
                         ln = []
                         ln_pos = []
-                        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']
+                        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + \
+                                     self.lanes[lane]['out']['nodes']
                         for i in self.lanes[lane]['in']['nodes']:
                             ln.append(i)
                             ln_pos.append(i.pos)
@@ -111,7 +157,8 @@ class Traffic(Model):
                                 ln.append(i)
                                 ln_pos.append(i.pos)
                         ln.append(list_nodes[len(list_nodes) - 1])
-                        car = Car(self.placed_agent_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
+                        car = Car(self.placed_agent_count, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0,
+                                  self.lanes[lane]['in']['nodes'][0],
                                   self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
                         self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
                     self.active_loops[loop] += 1
@@ -122,7 +169,8 @@ class Traffic(Model):
         print(lane)
         ln = []
         ln_pos = []
-        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']
+        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
+            'nodes']
         for i in self.lanes[lane]['in']['nodes']:
             ln.append(i)
             ln_pos.append(i.pos)
@@ -180,7 +228,7 @@ class Traffic(Model):
                         node_count += 1
                         if stop_line_lane:
                             traffic_light = Light(self.placed_agent_count, self, posxy, 0,
-                                                 lane['connectsTo']['signalGroup'])
+                                                  lane['connectsTo']['signalGroup'])
                             self.place_agent(traffic_light, posxy)
                             self.light_dict[lane_id] = traffic_light
                     agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, traffic_light,
@@ -247,7 +295,8 @@ class Traffic(Model):
                     1] * self.space.y_max
                 if 'gen' in sensor:
                     averaged = tuple(np.average(np.array([start_pos, end_pos]), axis=0))
-                    sensor_node = Node(self.placed_agent_count, self, averaged, False, False, sensor['laneID'], self.light_dict[sensor['laneID']])
+                    sensor_node = Node(self.placed_agent_count, self, averaged, False, False, sensor['laneID'],
+                                       self.light_dict[sensor['laneID']])
                     self.place_agent(sensor_node, averaged)
                     last = 999
                     nodes_to_remove = []
@@ -259,7 +308,8 @@ class Traffic(Model):
                     for on in nodes_to_remove:
                         self.lanes[sensor['laneID']]['in']['nodes'].remove(on)
                     self.lanes[sensor['laneID']]['in']['nodes'].insert(0, sensor_node)
-                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'])
+                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'],
+                               sensor['laneID'], sensor['distance'])
                 self.place_agent(agent, start_pos)
 
     def place_agent(self, agent, pos):

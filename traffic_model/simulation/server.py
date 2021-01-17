@@ -3,6 +3,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 from .model import Traffic
 from .SimpleContinuousModule import SimpleCanvas
 from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
+from mesa.visualization.UserParam import UserSettableParameter
 
 
 class TimeText(TextElement):
@@ -51,19 +52,24 @@ def draw_road(road):
     if "reg" in road.lane_id:
         if road.light is None:
             return {"Shape": "line", "Filled": "true", "Color": "Red", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1],
+                    "Type": road.agent_type}
         if road.light.state == 0:
             return {"Shape": "line", "Filled": "true", "Color": "rgba(102, 178, 118, 0)", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1],
+                    "Type": road.agent_type}
         elif road.light.state == 1:
             return {"Shape": "line", "Filled": "true", "Color": "Orange", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1],
+                    "Type": road.agent_type}
         else:
             return {"Shape": "line", "Filled": "true", "Color": "Green", "x1": road.start_node.pos[0],
-                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
+                    "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1],
+                    "Type": road.agent_type}
     else:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 0, 0.5)", "x1": road.start_node.pos[0],
-                "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
+                "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1],
+                "Type": road.agent_type}
 
 
 def draw_node(node):
@@ -90,7 +96,13 @@ def draw_light(light):
 traffic_canvas = SimpleCanvas(draw, 750, 750)
 time_text_element = TimeText()
 model_params = {
-    "population": 100,
+    "light_11": UserSettableParameter("slider", "Increase green time om light 11", 0, 0, 20, 1, description=""),
+    "light_12": UserSettableParameter("slider", "Increase green time om light 12", 0, 0, 20, 1, description=""),
+    "light_01": UserSettableParameter("slider", "Increase green time om light 01", 0, 0, 20, 1, description=""),
+    "light_03": UserSettableParameter("slider", "Increase green time om light 03", 0, 0, 20, 1, description=""),
+    "light_41": UserSettableParameter("slider", "Increase green time om light 41", 0, 0, 20, 1, description=""),
+    "light_04": UserSettableParameter("slider", "Increase green time om light 04", 0, 0, 20, 1, description=""),
+    "light_05": UserSettableParameter("slider", "Increase green time om light 05", 0, 0, 20, 1, description=""),
     "width": 750,
     "height": 750,
 }
