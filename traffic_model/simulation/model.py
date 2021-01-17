@@ -17,11 +17,9 @@ with open(dir_path + r'\data\lanesetporc.json') as json_file:
 with open(dir_path + r'\data\sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
 
-# def calculate_avg_car_stats(model):
-#     if len(model.finished_car_steps) > 0:
-#         return sum(model.finished_car_steps) / len(model.finished_car_steps)
-#     if len(model.finished_car_wait) > 0:
-#         return sum(model.finished_car_wait) / len(model.finished_car_wait)
+
+activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
+
 
 def finished_car_steps(model):
     if len(model.finished_car_steps) > 0:
@@ -38,6 +36,7 @@ def finished_car_wait(model):
 
 
 class Traffic(Model):
+    data = activation_data
     def __init__(
             self,
             light_11=0,
@@ -50,7 +49,6 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.data = self.load_data(dir_path + r'\data\BOS210.csv')
         self.step_count = 288000
         self.data_time = self.read_row_col('time')
         self.schedule = SimultaneousActivation(self)
@@ -86,7 +84,7 @@ class Traffic(Model):
 
         # Data collector
         self.datacollector = DataCollector(
-            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_steps})
+            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_wait})
 
         self.active_loops = {
             '044': 0,
@@ -96,10 +94,6 @@ class Traffic(Model):
             '014': 0,
             '034': 0
         }
-
-    def load_data(self, path):
-        df = pd.read_csv(path, sep=';')
-        return df
 
     def read_row_col(self, col):
         return self.data[col][self.step_count]
@@ -143,6 +137,15 @@ class Traffic(Model):
         self.spawn_cars()
         self.datacollector.collect(self)
         self.schedule.step()
+
+    def get_done_cars(self):
+        for car in self.schedule.agents:
+            if car.agent_type == 'car':
+                if not car.active:
+                    self.space.remove_agent(car)
+                    self.schedule.remove(car)
+
+
 
     def spawn_cars(self):
         for loop in self.active_loops.keys():
