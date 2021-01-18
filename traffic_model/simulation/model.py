@@ -1,6 +1,5 @@
 import pandas as pd
 import json
-import random
 import os
 
 from mesa import Model
@@ -11,25 +10,38 @@ from .agents import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
+# Loads all the information about the lanes.
 with open(dir_path + r'\data\lanesetporc.json') as json_file:
     data = json.load(json_file)
 
+# Loads all the information about the sensors.
 with open(dir_path + r'\data\sensorproc.json') as json_file:
     sensor_data = json.load(json_file)
 
+# Load the actication data (sensors and traffic light.
 activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
 
 
-def finished_car_steps(model):
-    #Checks if cars are not moving
+def finished_car_steps(model: Model) -> int:
+    """
+    Calculates the average amount of steps that a car needed to take to get to the end.
+    :param model: The Mesa model
+    :return: The average amount of steps a car takes.
+    """
+    # Checks if cars are not moving
     if len(model.finished_car_steps) > 0:
         return sum(model.finished_car_steps) / len(model.finished_car_steps)
     else:
         return 0
 
 
-def finished_car_wait(model):
-    #Checks if cars are waiting
+def finished_car_wait(model: Model) -> int:
+    """
+    Calculates the average amount of steps a car is waiting for a red light.
+    :param model: The Mesa model
+    :return: The average amount a car waits.
+    """
+    # Checks if cars are waiting
     if len(model.finished_car_wait) > 0:
         return sum(model.finished_car_wait) / len(model.finished_car_wait)
     else:
@@ -37,10 +49,14 @@ def finished_car_wait(model):
 
 
 class Traffic(Model):
+    # TODO: Document and refactor this class.
     data = activation_data
     finished_car_steps = []
     finished_car_wait = []
     cars_approaching_light = {}
+    step_count = 252000
+    placed_agent_count = 0
+    light_dict = {}
 
     def __init__(
             self,
@@ -54,15 +70,11 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.step_count = 252000
         self.data_time = self.read_row_col('time')
         self.schedule = SimultaneousActivation(self)
         self.space = ContinuousSpace(width, height, True)
-        self.placed_agent_count = 0
-        self.light_dict = {}
         self.lanes = self.make_intersection()
         self.make_sensors()
-        self.running = True
 
         # Traffic light setting
         light_setting = {
@@ -80,10 +92,6 @@ class Traffic(Model):
         self.sensor_on_no_car = 0
         self.sensor_on_car_found = 0
 
-        # Data collector
-        self.datacollector = DataCollector(
-            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_wait})
-
         self.active_loops = {
             '044': 0,
             '054': 0,
@@ -93,14 +101,36 @@ class Traffic(Model):
             '034': 0
         }
 
-    def read_row_col(self, col):
+        # Data collector
+        self.datacollector = DataCollector(
+            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_wait})
+
+        self.running = True
+
+    def read_row_col(self, col: str) -> str:
+        """
+        Reads the data of a specific column.
+        :param col: The column to read.
+        :return: The value of the column on the given step.
+        """
         return self.data[col][self.step_count]
 
-    def increase_by(self, value_to_increase, percent):
+    def increase_by(self, value_to_increase: int, percent: int) -> float:
+        """
+        Calculate how many steps the traffic light need to be extra on green.
+        :param value_to_increase: Base value.
+        :param percent: How much percent longer does the light need to be green.
+        :return: The amount of steps needed to reach the increase.
+        """
         return value_to_increase / 100 * percent
 
-    def manipulate_traffic_light_data(self, lights):
-        #Abilitises the possibility to change how the lights change
+    def manipulate_traffic_light_data(self, lights: dict) -> None:
+        """
+        Edit's the timing of the traffic lights.
+        :param lights: A dictionary with the setting of the traffic light.
+        :return: None
+        """
+        # Abilitises the possibility to change how the lights change
         for light in lights.keys():
             if lights[light] > 0:
                 streak = 0
@@ -121,50 +151,47 @@ class Traffic(Model):
                                     break
                             to_replace.append([index, np.round(increase_info), orange_index - index])
                         streak = 0
-                # try:
-                #     to_replace.pop()
-                # except:
-                #     print(to)
                 if len(to_replace) > 1:
                     to_replace.pop()
                 for i in to_replace:
                     self.data.loc[i[0]:i[0] + i[1], light] = '#'
                     self.data.loc[i[0] + i[1]: i[0] + i[1] + i[2], light] = 'Z'
 
-    def step(self):
+    def step(self) -> None:
+        """
+        A function that mesa requires. Just does a step in the simulation.
+        :return: None
+        """
         self.data_time = self.read_row_col('time')
         self.step_count += 1
-
-        # Recalculate cars for traffic light
-        for i in self.cars_approaching_light.keys():
-            self.cars_approaching_light[i] = []
-
-
-
-
-        # if self.step_count % 100 == 0:
-        #     print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
 
         self.spawn_cars()
         self.datacollector.collect(self)
         self.schedule.step()
-        print(self.cars_approaching_light)
 
-    def get_done_cars(self):
+    def get_done_cars(self) -> None:
+        """
+        Removes all the cars from simulation that are done.
+        :return: None
+        """
         for car in self.schedule.agents:
             if car.agent_type == 'car':
                 if not car.active:
                     self.space.remove_agent(car)
                     self.schedule.remove(car)
 
-    def spawn_cars(self):
+    def spawn_cars(self) -> None:
+        """
+        Spawns (or generates, depending on what games you play) the cars. The cars spawn when a sensor is activated.
+        :return: None
+        """
         for loop in self.active_loops.keys():
-            data = self.read_row_col(loop)
+            sensor_info = self.read_row_col(loop)
             if self.active_loops[loop]:
-                if data != '|':
+                if sensor_info != '|':
                     self.active_loops[loop] = 0
             else:
-                if data == '|':
+                if sensor_info == '|':
                     if self.active_loops[loop] == 0:
                         for sensor in sensor_data:
                             if sensor['name'] == loop:
@@ -187,28 +214,12 @@ class Traffic(Model):
                         self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
                     self.active_loops[loop] += 1
 
-    def just_test_one_car(self):
-        print(list(self.lanes.keys()))
-        lane = random.choice(list(self.lanes.keys()))
-        print(lane)
-        ln = []
-        ln_pos = []
-        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out'][
-            'nodes']
-        for i in self.lanes[lane]['in']['nodes']:
-            ln.append(i)
-            ln_pos.append(i.pos)
-        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
-            if i.pos not in ln_pos:
-                ln.append(i)
-                ln_pos.append(i.pos)
-
-        ln.append(list_nodes[len(list_nodes) - 1])
-        car = Car(69420, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
-                  self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
-        self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
-
-    def make_intersection(self):
+    def make_intersection(self) -> dict:
+        """
+        Function that basically makes the whole intersection: the roads, all the nodes and all the traffic lights.
+        Needs to happen in one function because the order is important.
+        :return: Dictionary with all the lanes and information about them.
+        """
         lanes = {}
         all_lane_nodes = {}
         for lane in data:
@@ -307,11 +318,13 @@ class Traffic(Model):
             if all_lane_nodes[l][0].connecting_lane:
                 connection = all_lane_nodes[all_lane_nodes[l][0].connecting_lane]
                 lanes[l]['out']['nodes'] = connection
-                # ADD check voor dubbele cords
-
         return lanes
 
-    def make_sensors(self):
+    def make_sensors(self) -> None:
+        """
+        Function that places all the sensors.
+        :return: None
+        """
         for sensor in sensor_data:
             if sensor['sensorDeviceType'] == 'inductionLoop':
                 start_pos = sensor['sensorRefPos'][0][0] * self.space.x_max, sensor['sensorRefPos'][0][
@@ -337,7 +350,13 @@ class Traffic(Model):
                                sensor['laneID'], sensor['distance'])
                 self.place_agent(agent, start_pos)
 
-    def place_agent(self, agent, pos):
+    def place_agent(self, agent: Agent, pos: tuple) -> None:
+        """
+        Function that places an agent on the space and adds it to the schedule.
+        :param agent: The agent to add.
+        :param pos: Where to add the agent.
+        :return: None
+        """
         self.space.place_agent(agent, pos)
         self.schedule.add(agent)
         self.placed_agent_count += 1

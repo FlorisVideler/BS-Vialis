@@ -44,9 +44,6 @@ class Node(Agent):
 
 
 class Car(Agent):
-    passed_light = False
-    last_distance_to_light = 9999999
-
     def __init__(self,
                  unique_id: int,
                  model,
@@ -141,11 +138,7 @@ class Car(Agent):
             self.steps_active += 1
             if not self.red_light():
                 dist_to_light = self.get_distance_to_light()
-                if dist_to_light[0] > self.last_distance_to_light:
-                    self.passed_light = True
-                if not self.passed_light:
-                    self.model.cars_approaching_light[self.lane[0].light].append(dist_to_light[0])
-                if dist_to_light[0] <= 100 and dist_to_light[1] == 0 and not self.passed_light:
+                if dist_to_light[0] <= 100 and dist_to_light[1] == 0:
                     self.current_speed -= (self.acceleration / 2)
                 else:
                     if self.current_speed < self.max_speed:
