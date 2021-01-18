@@ -19,6 +19,7 @@ class TimeText(TextElement):
 
 
 def draw(agent):
+    #Creates visual agents
     if agent.agent_type == "node":
         return draw_node(agent)
     if agent.agent_type == "sensor":
@@ -49,6 +50,7 @@ def draw_sensor(sensor):
 
 
 def draw_road(road):
+    #Creates a connecting road based on current lights
     if "reg" in road.lane_id:
         if road.light is None:
             return {"Shape": "line", "Filled": "true", "Color": "Red", "x1": road.start_node.pos[0],
@@ -85,6 +87,7 @@ def draw_node(node):
 
 
 def draw_light(light):
+    # State 0 is red, State 1 is yellow, State 2 is green
     if light.state == 2:
         return {"Shape": "rect", "Filled": "true", "Color": "Green", "w": 8, "h": 8}
     elif light.state == 1:

@@ -21,6 +21,7 @@ activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
 
 
 def finished_car_steps(model):
+    #Checks if cars are not moving
     if len(model.finished_car_steps) > 0:
         return sum(model.finished_car_steps) / len(model.finished_car_steps)
     else:
@@ -28,6 +29,7 @@ def finished_car_steps(model):
 
 
 def finished_car_wait(model):
+    #Checks if cars are waiting
     if len(model.finished_car_wait) > 0:
         return sum(model.finished_car_wait) / len(model.finished_car_wait)
     else:
@@ -96,6 +98,7 @@ class Traffic(Model):
         return value_to_increase / 100 * percent
 
     def manipulate_traffic_light_data(self, lights):
+        #Abilitises the possibility to change how the lights change
         for light in lights.keys():
             if lights[light] > 0:
                 streak = 0
