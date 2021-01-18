@@ -68,6 +68,7 @@ class Car(Agent):
         self.active = True
         self.passed_light = False
         self.steps_active = 0
+        self.wait_at_light = 0
 
         self.acceleration = 0.05722366187130742  # 1.25 km/h
 
@@ -112,6 +113,7 @@ class Car(Agent):
 
     def stop_car(self):
         self.model.finished_car_steps.append(self.steps_active)
+        self.model.finished_car_wait.append(self.wait_at_light)
         self.active = False
 
     def red_light(self):
@@ -164,6 +166,7 @@ class Car(Agent):
                 self.distance_to_next_node = next_distance_to_next_node
             else:
                 self.current_speed = 0
+                self.wait_at_light += 1
             # print("RED LIGHT")
         # print('speed', self.current_speed)
 
