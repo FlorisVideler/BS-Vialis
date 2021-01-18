@@ -9,7 +9,7 @@ def set_path_data():
     os.path.normpath(os.getcwd() + os.sep + os.pardir)
     output_path = (os.path.normpath(os.getcwd() + os.sep + os.pardir))
     #output_path = (os.path.normpath(output_path + os.sep + os.pardir))
-    output_path = output_path + "\\traffic_model\\simulation\\data"
+    output_path = output_path + "\\traffic_model\\simulation\\data\\"
     path = output_path
     return path
 
