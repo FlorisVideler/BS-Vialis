@@ -112,7 +112,5 @@ model_params = {
     "height": 750,
 }
 
-avg_car_steps_chart = ChartModule([{"Label": "avg_car_steps", "Color": "#0000FF"}], data_collector_name="datacollector")
-
-server = ModularServer(Traffic, [traffic_canvas, time_text_element, avg_car_steps_chart], "Traffic", model_params)
+server = ModularServer(Traffic, [traffic_canvas, time_text_element], "Traffic", model_params)
 server.port = 8522
