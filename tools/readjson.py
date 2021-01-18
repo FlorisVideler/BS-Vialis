@@ -4,9 +4,10 @@ from datetime import datetime
 from dateutil import tz
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print('dp', dir_path)
+
 
 def normalize(array):
+    #Normalises an array so it fits between 0 and 1.
     min_array = min(array)
     max_array = max(array)
     z = []
@@ -17,6 +18,7 @@ def normalize(array):
 
 
 def convert_time(x):
+    #Converts the time so it uses UTC and fits with current timezone.
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
     utc = datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
@@ -28,15 +30,18 @@ def convert_time(x):
     return central
 
 def true_path(path):
+    #Finds the actual path of a path.
     new_path = dir_path +'\\' + path
     return new_path
 
 def load_data(path):
+    #Loads the json file of that path.
     with open(true_path(path)) as json_file:
         return json.load(json_file)
 
 
 def write_data(path, data):
+    # Loads a json file on that path.
     with open(true_path(path), 'w') as fp:
         json.dump(data, fp, indent=4)
 

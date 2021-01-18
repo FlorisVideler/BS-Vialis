@@ -2,7 +2,7 @@ from mesa.visualization.ModularVisualization import ModularServer
 
 from .model import Traffic
 from .SimpleContinuousModule import SimpleCanvas
-from mesa.visualization.modules import CanvasGrid, ChartModule, TextElement
+from mesa.visualization.modules import ChartModule, TextElement
 from mesa.visualization.UserParam import UserSettableParameter
 
 
@@ -19,6 +19,7 @@ class TimeText(TextElement):
 
 
 def draw(agent):
+    #Creates visual agents
     if agent.agent_type == "node":
         return draw_node(agent)
     if agent.agent_type == "sensor":
@@ -33,6 +34,7 @@ def draw(agent):
 
 
 def draw_car(car):
+    # Kills the car if it is not active
     if car.active:
         return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 7.671633005114958, "h": 7.671633005114958}
     else:
@@ -40,6 +42,7 @@ def draw_car(car):
 
 
 def draw_sensor(sensor):
+    # Changes sensor color based on if it is on or not.
     if sensor.state == 0:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 255, 0.5)", "x1": sensor.start_pos[0],
                 "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
@@ -49,6 +52,7 @@ def draw_sensor(sensor):
 
 
 def draw_road(road):
+    # Creates a connecting road based on current cars driving from lights to destination.
     if "reg" in road.lane_id:
         if road.light is None:
             return {"Shape": "line", "Filled": "true", "Color": "Red", "x1": road.start_node.pos[0],
@@ -85,6 +89,7 @@ def draw_node(node):
 
 
 def draw_light(light):
+    # State 0 is red, State 1 is yellow, State 2 is green
     if light.state == 2:
         return {"Shape": "rect", "Filled": "true", "Color": "Green", "w": 8, "h": 8}
     elif light.state == 1:
