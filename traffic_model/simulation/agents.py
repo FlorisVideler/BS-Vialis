@@ -75,7 +75,9 @@ class Car(Agent):
         self.max_speed = 2.2889464748522967  # 50km/h
         self.current_speed = self.max_speed
 
-        ''' 1m = 1.6480414618936536 px
+        ''' 
+            1px = 0.6067808505563733m
+            1m = 1.6480414618936536 px
             50km/h = 1.3888888888888888 m per step (0.1 s)
             50km/h =  2.2889464748522967 px per step
         '''
@@ -138,7 +140,7 @@ class Car(Agent):
             self.steps_active += 1
             if not self.red_light():
                 dist_to_light = self.get_distance_to_light()
-                if dist_to_light[0] <= 100 and dist_to_light[1] == 0:
+                if dist_to_light[0] <= 100 and dist_to_light[1] == 0:  # 100px = 60.67808505563733m
                     self.current_speed -= (self.acceleration / 2)
                 else:
                     if self.current_speed < self.max_speed:
@@ -146,7 +148,7 @@ class Car(Agent):
 
                 next_car = self.get_next_car(60)
                 if next_car:
-                    if next_car[1] <= self.current_speed + 15:
+                    if next_car[1] <= self.current_speed + 15:  # 15px = 9.1017127583456m
                         self.current_speed = next_car[1] - 15  # Hier moet nog een getal vanaf
 
                 # print(self.get_distance_to_light())
