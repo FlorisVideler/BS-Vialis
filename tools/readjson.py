@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil import tz
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-print('dp', dir_path)
+
 
 def normalize(array):
     #Normalises an array so it fits between 0 and 1.
