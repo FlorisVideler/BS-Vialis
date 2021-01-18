@@ -54,7 +54,6 @@ class Traffic(Model):
     finished_car_steps = []
     finished_car_wait = []
     cars_approaching_light = {}
-    step_count = 252000
     placed_agent_count = 0
     light_dict = {}
 
@@ -69,9 +68,11 @@ class Traffic(Model):
             light_05=0,
             width=100,
             height=100,
-            max_steps=72000
+            max_steps=72000,
+            start=252000
     ):
         self.max_steps = max_steps
+        self.step_count = start
         self.data_time = self.read_row_col('time')
         self.schedule = SimultaneousActivation(self)
         self.space = ContinuousSpace(width, height, True)
@@ -137,7 +138,7 @@ class Traffic(Model):
             if lights[light] > 0:
                 streak = 0
                 to_replace = []
-                for index, value in enumerate(self.data[light][self.step_count:self.step_count+self.max_steps]):
+                for index, value in enumerate(self.data[light][self.step_count:self.step_count + self.max_steps]):
                     if value == "#":
                         streak += 1
                     else:
