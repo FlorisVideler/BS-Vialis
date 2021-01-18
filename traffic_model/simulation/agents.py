@@ -128,51 +128,57 @@ class Car(Agent):
         else:
             return False
 
-    def brake(self):
-        pass
+    def check_light_distance(self):
+        dist_to_light = self.get_distance_to_light()
+        if dist_to_light[0] <= 80 and dist_to_light[1] == 0:  # 100px = 60.67808505563733m
+            self.current_speed -= (self.acceleration / 2)
+        else:
+            if self.current_speed < self.max_speed:
+                self.current_speed += self.acceleration
+
+    def check_next_car(self):
+        next_car = self.get_next_car(60)
+        if next_car:
+            if next_car[1] <= self.current_speed + 15:  # 15px = 9.1017127583456m
+                self.current_speed = next_car[1] - 15  # Hier moet nog een getal vanaf
+
+    def move_to_next_node(self):
+        if not self.get_next_node():
+            self.stop_car()
+            return False
+        self.node_index += 1
+        self.move_agent(self.current_node.pos)
+        self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
+        return True
 
     def advance(self):
         self.move_agent(self.next_pos)
 
     def step(self):
+
         if self.active:
             self.steps_active += 1
             if not self.red_light():
-                dist_to_light = self.get_distance_to_light()
-                if dist_to_light[0] <= 100 and dist_to_light[1] == 0:  # 100px = 60.67808505563733m
-                    self.current_speed -= (self.acceleration / 2)
-                else:
-                    if self.current_speed < self.max_speed:
-                        self.current_speed += self.acceleration
+                self.check_light_distance()
 
-                next_car = self.get_next_car(60)
-                if next_car:
-                    if next_car[1] <= self.current_speed + 15:  # 15px = 9.1017127583456m
-                        self.current_speed = next_car[1] - 15  # Hier moet nog een getal vanaf
-
-                # print(self.get_distance_to_light())
+                self.check_next_car()
 
                 if self.current_speed < 0:
                     self.current_speed = 0
                 next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
                                                                       self.distance_to_next_node, self.current_speed)
                 if next_distance_to_next_node < 0:
-                    if not self.get_next_node():
-                        self.stop_car()
+                    if self.move_to_next_node():
+                        next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
+                                                                              self.distance_to_next_node,
+                                                                              abs(next_distance_to_next_node))
+                    else:
                         return
-                    self.node_index += 1
-                    self.move_agent(self.current_node.pos)
-                    self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
-                    next_pos, next_distance_to_next_node = get_next_point(self.pos, self.next_node.pos,
-                                                                          self.distance_to_next_node,
-                                                                          abs(next_distance_to_next_node))
                 self.next_pos = next_pos
                 self.distance_to_next_node = next_distance_to_next_node
             else:
                 self.current_speed = 0
                 self.wait_at_light += 1
-            # print("RED LIGHT")
-        # print('speed', self.current_speed)
 
 
 class Road(Agent):
