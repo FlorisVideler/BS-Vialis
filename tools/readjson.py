@@ -3,8 +3,15 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
-
+path = os.path.dirname(os.path.realpath(__file__))
+def set_path_data():
+    # Sets main path from ../tools/output to ../traffic_model/simulation/data
+    os.path.normpath(os.getcwd() + os.sep + os.pardir)
+    output_path = (os.path.normpath(os.getcwd() + os.sep + os.pardir))
+    #output_path = (os.path.normpath(output_path + os.sep + os.pardir))
+    output_path = output_path + "\\traffic_model\\simulation\\data\\"
+    path = output_path
+    return path
 
 def normalize(array):
     #Normalises an array so it fits between 0 and 1.
@@ -29,24 +36,22 @@ def convert_time(x):
     central = central.strftime('%d-%m-%Y %H:%M:%S.%f')
     return central
 
-def true_path(path):
-    #Finds the actual path of a path.
-    new_path = dir_path +'\\' + path
-    return new_path
+
 
 def load_data(path):
     #Loads the json file of that path.
-    with open(true_path(path)) as json_file:
+    with open(path) as json_file:
         return json.load(json_file)
 
 
-def write_data(path, data):
+def write_data(path,data):
+    print(path)
     # Loads a json file on that path.
-    with open(true_path(path), 'w') as fp:
+    with open(set_path_data()+ path, 'w') as fp:
         json.dump(data, fp, indent=4)
 
 
-def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, output='default'):
+def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,):
     all_x = []
     all_y = []
     all_lanes = []
@@ -80,7 +85,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     # Add the positions of Niels's car if needed
     if niels:
         for route_number in niels:
-            df_route = pd.read_csv(f'{dir_path}/car_data/route{route_number}.csv')
+            df_route = pd.read_csv(f'{path}/car_data/route{route_number}.csv')
             df_route['time'] = df_route['time'].apply(convert_time)
             total_df_len += len(df_route['time'])
             all_routes.append(df_route)
