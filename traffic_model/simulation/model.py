@@ -38,6 +38,8 @@ class Traffic(Model):
     data = activation_data
     finished_car_steps = []
     finished_car_wait = []
+    cars_approaching_light = {}
+
     def __init__(
             self,
             light_11=0,
@@ -130,12 +132,20 @@ class Traffic(Model):
         self.data_time = self.read_row_col('time')
         self.step_count += 1
 
+        # Recalculate cars for traffic light
+        for i in self.cars_approaching_light.keys():
+            self.cars_approaching_light[i] = []
+
+
+
+
         # if self.step_count % 100 == 0:
         #     print(self.sensor_on_no_car + self.sensor_on_car_found, self.sensor_on_no_car, self.sensor_on_car_found)
 
         self.spawn_cars()
         self.datacollector.collect(self)
         self.schedule.step()
+        print(self.cars_approaching_light)
 
     def get_done_cars(self):
         for car in self.schedule.agents:
@@ -240,6 +250,7 @@ class Traffic(Model):
                         if stop_line_lane:
                             traffic_light = Light(self.placed_agent_count, self, posxy, 0,
                                                   lane['connectsTo']['signalGroup'])
+                            self.cars_approaching_light[traffic_light] = []
                             self.place_agent(traffic_light, posxy)
                             self.light_dict[lane_id] = traffic_light
                     agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, traffic_light,
