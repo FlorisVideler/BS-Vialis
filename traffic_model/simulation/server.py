@@ -96,13 +96,13 @@ def draw_light(light):
 traffic_canvas = SimpleCanvas(draw, 750, 750)
 time_text_element = TimeText()
 model_params = {
-    "light_11": UserSettableParameter("slider", "Increase green time om light 11", 0, 0, 20, 1, description=""),
-    "light_12": UserSettableParameter("slider", "Increase green time om light 12", 0, 0, 20, 1, description=""),
-    "light_01": UserSettableParameter("slider", "Increase green time om light 01", 0, 0, 20, 1, description=""),
-    "light_03": UserSettableParameter("slider", "Increase green time om light 03", 0, 0, 20, 1, description=""),
-    "light_41": UserSettableParameter("slider", "Increase green time om light 41", 0, 0, 20, 1, description=""),
-    "light_04": UserSettableParameter("slider", "Increase green time om light 04", 0, 0, 20, 1, description=""),
-    "light_05": UserSettableParameter("slider", "Increase green time om light 05", 0, 0, 20, 1, description=""),
+    "light_11": UserSettableParameter("slider", "Increase green time on light 11", 0, 0, 20, 1, description=""),
+    "light_12": UserSettableParameter("slider", "Increase green time on light 12", 0, 0, 20, 1, description=""),
+    "light_01": UserSettableParameter("slider", "Increase green time on light 01", 0, 0, 20, 1, description=""),
+    "light_03": UserSettableParameter("slider", "Increase green time on light 03", 0, 0, 20, 1, description=""),
+    "light_41": UserSettableParameter("slider", "Increase green time on light 41", 0, 0, 20, 1, description=""),
+    "light_04": UserSettableParameter("slider", "Increase green time on light 04", 0, 0, 20, 1, description=""),
+    "light_05": UserSettableParameter("slider", "Increase green time on light 05", 0, 0, 20, 1, description=""),
     "width": 750,
     "height": 750,
 }
