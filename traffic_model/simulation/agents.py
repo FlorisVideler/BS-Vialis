@@ -3,8 +3,9 @@ import math
 import numpy as np
 
 
-def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float):
+def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float) -> tuple:
     """
+    Calculates the next point from a current point, based on an end point.
     :param curr_point: current coordinates
     :param target_point: target coordinates
     :param distance_between_points: distance between current point and target point
@@ -44,6 +45,13 @@ class Node(Agent):
 
 
 class Car(Agent):
+    next_pos = None
+    active = True
+    passed_light = False
+    steps_active = 0
+    wait_at_light = 0
+    acceleration = 0.05722366187130742  # 1.25 km/h
+    max_speed = 2.2889464748522967 # 50km/h
     def __init__(self,
                  unique_id: int,
                  model,
@@ -64,15 +72,6 @@ class Car(Agent):
         self.lane = lane
         self.node_index = node_index
         self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
-        self.next_pos = None
-        self.active = True
-        self.passed_light = False
-        self.steps_active = 0
-        self.wait_at_light = 0
-
-        self.acceleration = 0.05722366187130742  # 1.25 km/h
-
-        self.max_speed = 2.2889464748522967  # 50km/h
         self.current_speed = self.max_speed
 
         ''' 
@@ -198,6 +197,7 @@ class Road(Agent):
 
 
 class Sensor(Agent):
+    car_on_sensor_position = False
     def __init__(
             self,
             unique_id: int,
@@ -221,7 +221,6 @@ class Sensor(Agent):
         self.lane_id = lane_id
         self.distance_from_light = distance_from_light
         self.light = self.get_light_from_lane()
-        self.car_on_sensor_position = False
 
     def get_light_from_lane(self):
         #Checks the state of the light on *this* lane
