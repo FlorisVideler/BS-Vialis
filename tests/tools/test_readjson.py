@@ -17,7 +17,7 @@ class TestAgents(unittest.TestCase):
 
     def test_path(self):
         p1 = 1
-        subject_path = 'laneset_BOS210.json'
+        subject_path = tr.true_path('laneset_BOS210.json')
         try:
             with open(subject_path) as json_file:
                 json.load(json_file)
