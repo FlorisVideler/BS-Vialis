@@ -98,13 +98,16 @@ class Car(Agent):
             return None
 
     def get_distance_to_light(self):
+        # Gets the distance from self to traffic light
         return math.dist(self.pos, self.lane[0].light.pos), self.lane[0].light.state
 
     def move_agent(self, new_pos):
+        # Moves agent
         self.pos = new_pos
         self.model.space.move_agent(self, new_pos)
 
     def get_next_node(self):
+        # Gets the next node to move to
         self.current_node = self.next_node
         if self.current_node == self.end_node:
             return False
@@ -112,11 +115,13 @@ class Car(Agent):
         return True
 
     def stop_car(self):
+        # Stops car
         self.model.finished_car_steps.append(self.steps_active)
         self.model.finished_car_wait.append(self.wait_at_light)
         self.active = False
 
     def red_light(self):
+        # Checks if the car is on the stopline and the light is red, in which case it will stop
         if self.current_node.stop_line and self.current_node.light.state == 0:
             return True
         else:
@@ -129,8 +134,6 @@ class Car(Agent):
         self.move_agent(self.next_pos)
 
     def step(self):
-        # print(self.get_distance_to_light())
-        # print(self.unique_id, self.current_node.lane_id, self.next_node.lane_id)
         if self.active:
             self.steps_active += 1
             if not self.red_light():
@@ -219,6 +222,7 @@ class Sensor(Agent):
         self.car_on_sensor_position = False
 
     def get_light_from_lane(self):
+        #Checks the state of the light on *this* lane
         if self.lane_id in self.model.lanes:
             return self.model.lanes[self.lane_id]['in']['nodes'][0].light
         return None
