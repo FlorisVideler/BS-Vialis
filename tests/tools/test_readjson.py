@@ -1,6 +1,5 @@
 import tools.readjson as tr
-import json
-import unittest
+import json, unittest
 
 
 class TestAgents(unittest.TestCase):
