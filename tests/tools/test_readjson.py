@@ -1,4 +1,4 @@
-import tools.output.readjson as tr
+import tools.readjson as tr
 import json, unittest
 
 
