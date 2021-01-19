@@ -197,7 +197,8 @@ class Traffic(Model):
 
     def spawn_cars(self) -> None:
         """
-        Spawns (or generates, depending on what games you play) the cars. The cars spawn when a sensor is activated.
+        Spawns (or generates, depending on what games you play) the cars.
+        The cars spawn when a sensor is activated.
         :return: None
         """
         for loop in self.active_loops.keys():

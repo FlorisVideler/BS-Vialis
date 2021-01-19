@@ -4,11 +4,13 @@ import math
 
 def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float):
     """
+    Calculates the next point from a current point, based on an end point.
     :param curr_point: current coordinates
     :param target_point: target coordinates
     :param distance_between_points: distance between current point and target point
     :param distance: distance you want to travel
     :return: the next coordinates, distance between next point en target point
+
     """
     x = target_point[0] - curr_point[0]
     y = target_point[1] - curr_point[1]

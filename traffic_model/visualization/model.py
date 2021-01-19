@@ -67,7 +67,13 @@ class Traffic(Model):
             data_dict[file] = pd.read_csv(path[file], sep=sep)
         return data_dict
 
+
     def read_row_col(self, intersection, col):
+        """
+        Reads the data of a specific column.
+        :param col: The column to read.
+        :return: The value of the column on the given step.
+        """
         return self.data[intersection][col][self.step_count]
         # return self.data[col][self.step_count]
 
@@ -76,6 +82,10 @@ class Traffic(Model):
             return json.load(json_file)
 
     def step(self):
+        """
+        A function that mesa requires. Just does a step in the simulation.
+        :return: None
+        """
         self.schedule.step()
         self.data_time = self.read_row_col('BOS210', 'time')
         self.step_count += 1
@@ -108,6 +118,12 @@ class Traffic(Model):
         self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
 
     def make_intersection(self):
+        """
+        Function that basically makes the whole intersection: the roads, all the nodes
+        and all the traffic lights.
+        Needs to happen in one function because the order is important.
+        :return: Dictionary with all the lanes and information about them.
+        """
         light_dict = {}
         lanes = {}
         all_lane_nodes = {}
@@ -211,6 +227,10 @@ class Traffic(Model):
         return lanes
 
     def make_sensors(self):
+        """
+        Function that places all the sensors.
+        :return: None
+        """
         for sensor in sensor_data:
             if sensor['sensorDeviceType'] == 'inductionLoop':
                 start_pos = sensor['sensorRefPos'][0][0] * self.space.x_max, sensor['sensorRefPos'][0][
@@ -221,6 +241,12 @@ class Traffic(Model):
                 self.place_agent(agent, start_pos)
 
     def place_agent(self, agent, pos):
-        self.space.place_agent(agent, pos)
+        """
+        Function that places an agent on the space and adds it to the schedule.
+        :param agent: The agent to add.
+        :param pos: Where to add the agent.
+        :return: None
+        """
+        self.spatce.place_agent(agent, pos)
         self.schedule.add(agent)
         self.placed_agent_count += 1
