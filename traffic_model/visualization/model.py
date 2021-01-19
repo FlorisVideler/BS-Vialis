@@ -247,6 +247,6 @@ class Traffic(Model):
         :param pos: Where to add the agent.
         :return: None
         """
-        self.spatce.place_agent(agent, pos)
+        self.space.place_agent(agent, pos)
         self.schedule.add(agent)
         self.placed_agent_count += 1
