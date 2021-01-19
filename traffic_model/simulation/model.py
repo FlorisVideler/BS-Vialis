@@ -11,11 +11,11 @@ from .agents import *
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 # Loads all the information about the lanes.
-with open(dir_path + r'\data\lanesetporc.json') as json_file:
+with open(dir_path + r'\data\lane_done_BOS210.json') as json_file:
     data = json.load(json_file)
 
 # Loads all the information about the sensors.
-with open(dir_path + r'\data\sensorproc.json') as json_file:
+with open(dir_path + r'\data\sensors_done_BOS210.json') as json_file:
     sensor_data = json.load(json_file)
 
 # Load the actication data (sensors and traffic light.
