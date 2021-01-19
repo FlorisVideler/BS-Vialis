@@ -3,15 +3,10 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
-path = os.path.dirname(os.path.realpath(__file__))
-def set_path_data():
-    # Sets main path from ../tools/output to ../traffic_model/simulation/data
-    os.path.normpath(os.getcwd() + os.sep + os.pardir)
-    output_path = (os.path.normpath(os.getcwd() + os.sep + os.pardir))
-    #output_path = (os.path.normpath(output_path + os.sep + os.pardir))
-    output_path = output_path + "\\traffic_model\\simulation\\data\\"
-    path = output_path
-    return path
+main_path = os.path.dirname(os.path.realpath(__file__))
+main_path =(os.path.normpath(main_path + os.sep + os.pardir))
+main_path =(os.path.normpath(main_path + os.sep + os.pardir))
+print(main_path)
 
 def normalize(array):
     #Normalises an array so it fits between 0 and 1.
@@ -40,18 +35,20 @@ def convert_time(x):
 
 def load_data(path):
     #Loads the json file of that path.
-    with open(path) as json_file:
+    with open(main_path+"/tools/output/" +path) as json_file:
         return json.load(json_file)
 
 
-def write_data(path,data):
-    print(path)
-    # Loads a json file on that path.
-    with open(set_path_data()+ path, 'w') as fp:
-        json.dump(data, fp, indent=4)
+def write_data(path,data,sim):
+    if sim:
+        with open(main_path+"/traffic_model/simulation/data/"+ path, 'w') as fp:
+            json.dump(data, fp, indent=4)
+    if sim == False:
+        with open(main_path + "/traffic_model/visualization/data/" + path, 'w') as fp:
+            json.dump(data, fp, indent=4)
 
 
-def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,):
+def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,sim = False):
     all_x = []
     all_y = []
     all_lanes = []
@@ -59,6 +56,10 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,)
     all_routes = []
     total_df_len = 0
     index = 0
+    if sim:
+        lanes_to_process = ['laneset_BOS210.json']
+        sensors_to_process = ['sensors_list_BOS210.json']
+        niels=[]
     # Add the lane positions to the global list to normalize
     for lanes_file in lanes_to_process:
         lanes_data = load_data(lanes_file)
@@ -85,7 +86,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,)
     # Add the positions of Niels's car if needed
     if niels:
         for route_number in niels:
-            df_route = pd.read_csv(f'{path}/car_data/route{route_number}.csv')
+            df_route = pd.read_csv(f'{main_path}/tools/car_data/route{route_number}.csv')
             df_route['time'] = df_route['time'].apply(convert_time)
             total_df_len += len(df_route['time'])
             all_routes.append(df_route)
@@ -107,7 +108,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,)
                 for pos in lane['regional']:
                     pos['ref_pos'] = [norm_x[index], norm_y[index]]
                     index += 1
-        write_data(f'lane_done_{lanes_data[0]["intersectionName"]}.json', lanes_data)
+        write_data(f'lane_done_{lanes_data[0]["intersectionName"]}.json', lanes_data,sim)
 
     # Same for the sensors
     for sensors_data in all_sensors:
@@ -115,7 +116,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,)
             if sensor['sensorDeviceType'] == 'inductionLoop':
                 sensor['sensorRefPos'] = [[norm_x[index], norm_y[index]], [norm_x[index + 1], norm_y[index + 1]]]
                 index += 2
-        write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data)
+        write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data,sim)
 
     df_lat = norm_x[-total_df_len:]
     df_lon = norm_y[-total_df_len:]
@@ -125,7 +126,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None,)
         for i in range(len(all_routes[route_index]['time'])):
             json_obj.append([df_lat[index], df_lon[index]])
             index += 1
-        write_data(f'route{route_index}.json', json_obj)
+        write_data(f'route{route_index}.json', json_obj, sim=False)
 
 
 lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
