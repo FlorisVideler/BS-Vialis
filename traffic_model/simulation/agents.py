@@ -130,7 +130,7 @@ class Car(Agent):
 
     def check_light_distance(self):
         dist_to_light = self.get_distance_to_light()
-        if dist_to_light[0] <= 80 and dist_to_light[1] == 0:  # 100px = 60.67808505563733m
+        if dist_to_light[0] <= 80 and dist_to_light[1] == 0:  # 80px = 48.54246804450987m
             self.current_speed -= (self.acceleration / 2)
         else:
             if self.current_speed < self.max_speed:
