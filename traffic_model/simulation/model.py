@@ -66,6 +66,7 @@ class Traffic(Model):
             light_41=0,
             light_04=0,
             light_05=0,
+            all_lights=0,
             width=100,
             height=100,
             max_steps=72000,
@@ -80,15 +81,26 @@ class Traffic(Model):
         self.make_sensors()
 
         # Traffic light setting
-        light_setting = {
-            '11': light_11,
-            '12': light_12,
-            '01': light_01,
-            '03': light_03,
-            '41': light_41,
-            '04': light_04,
-            '05': light_05
-        }
+        if all_lights > 0:
+            light_setting = {
+                '11': all_lights,
+                '12': all_lights,
+                '01': all_lights,
+                '03': all_lights,
+                '41': all_lights,
+                '04': all_lights,
+                '05': all_lights
+            }
+        else:
+            light_setting = {
+                '11': light_11,
+                '12': light_12,
+                '01': light_01,
+                '03': light_03,
+                '41': light_41,
+                '04': light_04,
+                '05': light_05
+            }
         self.manipulate_traffic_light_data(light_setting)
 
         # Sensor accuracy tracker
