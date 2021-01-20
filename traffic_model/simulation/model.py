@@ -28,7 +28,6 @@ activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
 
 class Traffic(Model):
     # TODO: Document and refactor this class.
-    cars_approaching_light = {}
     placed_agent_count = 0
     sgr_data = sgr_data
     light_dict = {}
@@ -191,13 +190,6 @@ class Traffic(Model):
                 if len(crosses) > 0:
                     crosses.append(crosses[-1] + int(self.sgr_data[light][col]) * 10)
                     self.data.loc[crosses[0]: crosses[-1], col] = np.nan
-        # TODO: CAN DIS GO?
-        # for j in self.data.columns:
-        #     if j in self.sgr_data[light]:
-        #         for index in range(int(increase)):
-        #             if self.data[j][index + replace_index] == '#' or self.data[j][index + replace_index] == 'Z':
-        #                 print(self.data[j][index + replace_index])
-        #                 print(light, 'IS IN THE WAY OF', j, index + replace_index)
 
         self.data.loc[replace_index:replace_index + increase, light] = '#'
         self.data.loc[replace_index + increase: orange, light] = 'Z'
@@ -312,7 +304,6 @@ class Traffic(Model):
                         if stop_line_lane:
                             traffic_light = Light(self.placed_agent_count, self, posxy, 0,
                                                   lane['connectsTo']['signalGroup'])
-                            self.cars_approaching_light[traffic_light] = []
                             self.place_agent(traffic_light, posxy)
                             self.light_dict[lane_id] = traffic_light
                     agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, traffic_light,

@@ -20,19 +20,45 @@ def get_next_point(curr_point: tuple, target_point: tuple, distance_between_poin
 
 
 class Node(Agent):
+    """
+    A class used to represent a Node used to form a Road.
+    Attributes:
+        pos: A x, y position tuple.
+        stop_line: Whether this node is a stop line or not.
+        agent_type: What type of agent this is.
+        reg: Whether this node is a regional node or not.
+        active:Whether this node is active or not.
+        lane_id: The id of the lane this node is a part of.
+        light: The light that controls the traffic traveling over this node.
+        connecting_lane: The id of the lane this node is connecting to.
+    """
+
     def __init__(
             self,
             unique_id: int,
-            model,
+            model: Model,
             pos: tuple,
             stop_line: bool,
             reg: bool,
             lane_id: int,
-            light,
-            connecting_lane=None,
+            light: Light,
+            connecting_lane: str = None,
             active: bool = True,
             agent_type: str = "node",
     ):
+        """
+        Constructor for the Node class.
+        :param unique_id: The unique agent ID.
+        :param model: The model where the agent is in.
+        :param pos: A x, y position tuple.
+        :param stop_line: Whether this node is a stop line or not.
+        :param reg: Whether this node is a regional node or not.
+        :param lane_id: The id of the lane this node is a part of.
+        :param light: The light that controls the traffic traveling over this node.
+        :param connecting_lane: The id of the lane this node is connecting to.
+        :param active: Whether this node is active or not.
+        :param agent_type: What type of agent this is.
+        """
         super().__init__(unique_id, model)
         self.pos = pos
         self.stop_line = stop_line
@@ -45,16 +71,41 @@ class Node(Agent):
 
 
 class Car(Agent):
+    """
+    A class used to represent a Car, used to drive in the simulation
+
+    1px = 0.6067808505563733m
+    1m = 1.6480414618936536 px
+    50km/h = 1.3888888888888888 m per step (0.1 s)
+    50km/h =  2.2889464748522967 px per step
+
+    Attributes:
+        next_pos: The next position the car wants to move to. X, y tuple.
+        active: Whether the car is active or not.
+        steps_active: How many steps the car has been active.
+        wait_at_light: How many steps the car has bee waiting at a red light.
+        acceleration: The amount om pixels per step the car wants accelerate at.
+        max_speed: The amount of pixels per step the car is allowed to move.
+        pos: A x, y position tuple.
+        current_node: The current node the car is at.
+        next_node: The next node, where the car is moving to.
+        end_node: The final node, the car stops at this node.
+        agent_type: What type of agent this is.
+        lane: The lane which the car is driving on.
+        node_index: The current node index the car is at.
+        distance_to_next_node: The distance in pixels to the next node.
+        current_speed: The current amountof pixels per step the car is moving at.
+    """
     next_pos = None
     active = True
-    passed_light = False
     steps_active = 0
     wait_at_light = 0
     acceleration = 0.05722366187130742  # 1.25 km/h
-    max_speed = 2.2889464748522967 # 50km/h
+    max_speed = 2.2889464748522967  # 50km/h
+
     def __init__(self,
                  unique_id: int,
-                 model,
+                 model: Model,
                  pos: tuple,
                  lane: list,
                  node_index: int,
@@ -63,6 +114,18 @@ class Car(Agent):
                  end_node: Node,
                  agent_type: str = "car"
                  ):
+        """
+        Constructor for the Car class.
+        :param unique_id: The unique agent ID.
+        :param model: The model where the agent is in.
+        :param pos: A x, y position tuple.
+        :param lane: The lane which the car is driving on.
+        :param node_index: The current node index the car is at.
+        :param current_node: The current node the car is at.
+        :param next_node: The next node, where the car is moving to.
+        :param end_node: The final node, the car stops at this node.
+        :param agent_type: What type of agent this is.
+        """
         super().__init__(unique_id, model)
         self.pos = pos
         self.current_node = current_node
@@ -73,13 +136,6 @@ class Car(Agent):
         self.node_index = node_index
         self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
         self.current_speed = self.max_speed
-
-        ''' 
-            1px = 0.6067808505563733m
-            1m = 1.6480414618936536 px
-            50km/h = 1.3888888888888888 m per step (0.1 s)
-            50km/h =  2.2889464748522967 px per step
-        '''
 
     def get_next_car(self, radius: int) -> tuple:
         """
@@ -225,17 +281,39 @@ class Car(Agent):
 
 
 class Road(Agent):
+    """
+    A class used to represent a Road, used to connect two nodes. Mainly used for visualisation.
+    Attributes:
+        start_node: The node from where the road starts.
+        end_node: The node where the roads ends.
+        lane_id: The lane id of the lane this road is forming.
+        agent_type: What type of agent this is.
+        active: Whether this road is active or not.
+        light: The light that controls the lane this road is forming.
+    """
+
     def __init__(
             self,
             unique_id: int,
-            model,
+            model: Model,
             start_node: Node,
             end_node: Node,
             lane_id: str,
-            light=None,
+            light: Light = None,
             active: bool = True,
             agent_type: str = "road"
     ):
+        """
+        Constructor for the Road class.
+        :param unique_id: The unique agent ID.
+        :param model: The model where the agent is in.
+        :param start_node: The node from where the road starts.
+        :param end_node: The node where the roads ends.
+        :param lane_id: The lane id of the lane this road is forming.
+        :param light: The light that controls the lane this road is forming.
+        :param active: Whether this road is active or not.
+        :param agent_type: What type of agent this is.
+        """
         super().__init__(unique_id, model)
         self.start_node = start_node
         self.end_node = end_node
@@ -246,11 +324,22 @@ class Road(Agent):
 
 
 class Sensor(Agent):
-    car_on_sensor_position = False
+    """
+    A class used to represent a Sensor.
+    Attributes:
+        pos: A x, y position tuple.
+        state: The current state of the sensor.
+        agent_type: What type of agent this is.
+        sensor_id: The sensor id.
+        start_pos: The x, y position that the sensor starts at.
+        end_pos: The x, y position that the sensor ends at.
+        lane_id: The lane id of where the sensor is.
+        distance_from_light: The distance from the corresponding traffic light.
+    """
     def __init__(
             self,
             unique_id: int,
-            model,
+            model: Model,
             pos: tuple,
             start_pos: tuple,
             end_pos: tuple,
@@ -260,6 +349,19 @@ class Sensor(Agent):
             distance_from_light: int,
             agent_type: str = "sensor"
     ):
+        """
+        Constructor for the Sensor class.
+        :param unique_id: The unique agent ID.
+        :param model: The model where the agent is in.
+        :param pos: A x, y position tuple.
+        :param start_pos: The x, y position that the sensor starts at.
+        :param end_pos: The x, y position that the sensor ends at.
+        :param state: The current state of the sensor.
+        :param sensor_id: The sensor id.
+        :param lane_id: The lane id of where the sensor is.
+        :param distance_from_light: The distance from the corresponding traffic light.
+        :param agent_type: What type of agent this is.
+        """
         super().__init__(unique_id, model)
         self.pos = pos
         self.state = state
@@ -303,15 +405,32 @@ class Sensor(Agent):
 
 
 class Light(Agent):
+    """
+    A class used to represent a Light.
+    Attributes:
+        pos: A x, y position tuple.
+        state: The current state if the light.
+        agent_type: What type of agent this is.
+        light_id: The traffic light id.
+    """
     def __init__(
             self,
             unique_id: int,
-            model,
+            model: Model,
             pos: tuple,
             state: int,
             light_id: str,
             agent_type: str = 'light'
     ):
+        """
+        Constructor for the Light class.
+        :param unique_id: The unique agent ID.
+        :param model: The model where the agent is in.
+        :param pos: A x, y position tuple.
+        :param state: The current state if the light.
+        :param light_id: The traffic light id.
+        :param agent_type: What type of agent this is.
+        """
         super().__init__(unique_id, model)
         self.pos = pos
         self.state = state
