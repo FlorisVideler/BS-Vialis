@@ -18,43 +18,19 @@ with open(dir_path + r'\data\lane_done_BOS210.json') as json_file:
 with open(dir_path + r'\data\sensors_done_BOS210.json') as json_file:
     sensor_data = json.load(json_file)
 
+# Loads all the information about the signalgroups.
+with open(dir_path + r'\data\sgr.json') as json_file:
+    sgr_data = json.load(json_file)
+
 # Load the actication data (sensors and traffic light.
 activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
 
 
-def finished_car_steps(model: Model) -> int:
-    """
-    Calculates the average amount of steps that a car needed to take to get to the end.
-    :param model: The Mesa model
-    :return: The average amount of steps a car takes.
-    """
-    # Checks if cars are not moving
-    if len(model.finished_car_steps) > 0:
-        return sum(model.finished_car_steps) / len(model.finished_car_steps)
-    else:
-        return 0
-
-
-def finished_car_wait(model: Model) -> int:
-    """
-    Calculates the average amount of steps a car is waiting for a red light.
-    :param model: The Mesa model
-    :return: The average amount a car waits.
-    """
-    # Checks if cars are waiting
-    if len(model.finished_car_wait) > 0:
-        return sum(model.finished_car_wait) / len(model.finished_car_wait)
-    else:
-        return 0
-
-
 class Traffic(Model):
     # TODO: Document and refactor this class.
-    data = activation_data
-    finished_car_steps = []
-    finished_car_wait = []
     cars_approaching_light = {}
     placed_agent_count = 0
+    sgr_data = sgr_data
     light_dict = {}
 
     def __init__(
@@ -70,8 +46,13 @@ class Traffic(Model):
             width=100,
             height=100,
             max_steps=72000,
-            start=252000
+            start=468000
     ):
+        self.data = activation_data.copy()
+        self.finished_car_steps = []
+        self.finished_car_wait = []
+        self.finished_car_steps_int = 0
+        self.finished_car_wait_int = 0
         self.max_steps = max_steps
         self.step_count = start
         self.data_time = self.read_row_col('time')
@@ -118,9 +99,33 @@ class Traffic(Model):
 
         # Data collector
         self.datacollector = DataCollector(
-            model_reporters={'avg_car_steps': finished_car_steps, 'avg_car_wait': finished_car_wait})
+            model_reporters={'avg_car_steps': 'finished_car_steps_int', 'avg_car_wait': 'finished_car_wait_int'})
 
         self.running = True
+
+    def calc_finished_car_steps(self) -> int:
+        """
+        Calculates the average amount of steps that a car needed to take to get to the end.
+        :param model: The Mesa model
+        :return: The average amount of steps a car takes.
+        """
+        # Checks if cars are not moving
+        if len(self.finished_car_steps) > 0:
+            return sum(self.finished_car_steps) / len(self.finished_car_steps)
+        else:
+            return 0
+
+    def calc_finished_car_wait(self) -> int:
+        """
+        Calculates the average amount of steps a car is waiting for a red light.
+        :param model: The Mesa model
+        :return: The average amount a car waits.
+        """
+        # Checks if cars are waiting
+        if len(self.finished_car_wait) > 0:
+            return sum(self.finished_car_wait) / len(self.finished_car_wait)
+        else:
+            return 0
 
     def read_row_col(self, col: str) -> str:
         """
@@ -145,7 +150,6 @@ class Traffic(Model):
         :param lights: A dictionary with the setting of the traffic light.
         :return: None
         """
-        # Abilitises the possibility to change how the lights change
         for light in lights.keys():
             if lights[light] > 0:
                 streak = 0
@@ -156,7 +160,7 @@ class Traffic(Model):
                     else:
                         if streak > 0:
                             increase_info = self.increase_by(streak, lights[light])
-                            orange_index = index
+                            orange_index = index + self.step_count
                             orange_value = value
                             while orange_value == 'Z':
                                 orange_index += 1
@@ -164,13 +168,34 @@ class Traffic(Model):
                                     orange_value = self.data[light][orange_index]
                                 except:
                                     break
-                            to_replace.append([index, np.round(increase_info), orange_index - index])
+                            to_replace.append([index + self.step_count, np.round(increase_info), orange_index + np.round(increase_info)])
                         streak = 0
                 if len(to_replace) > 1:
                     to_replace.pop()
                 for i in to_replace:
-                    self.data.loc[i[0]:i[0] + i[1], light] = '#'
-                    self.data.loc[i[0] + i[1]: i[0] + i[1] + i[2], light] = 'Z'
+                    self.check_and_replace_timings(i[0], i[1], i[2], light)
+
+    def check_and_replace_timings(self, replace_index, increase, orange, light):
+        for col in self.data.columns:
+            if col in self.sgr_data[light]:
+                crosses = []
+                for c in range(replace_index, replace_index+int(increase)):
+                    if self.data[col][c] == 'Z' or self.data[col][c] == '#':
+                        crosses.append(c)
+                if len(crosses) > 0:
+                    crosses.append(crosses[-1] + int(self.sgr_data[light][col]) * 10)
+                    self.data.loc[crosses[0]: crosses[-1], col] = np.nan
+        for j in self.data.columns:
+            if j in self.sgr_data[light]:
+                for index in range(int(increase)):
+                    if self.data[j][index + replace_index] == '#' or self.data[j][index + replace_index] == 'Z':
+                        print(self.data[j][index + replace_index])
+                        print(light, 'IS IN THE WAY OF', j, index + replace_index)
+
+        # print('makin green', replace_index, replace_index + increase, light)
+        # print('makin orange', replace_index + increase, orange, light)
+        self.data.loc[replace_index:replace_index + increase, light] = '#'
+        self.data.loc[replace_index + increase: orange, light] = 'Z'
 
     def step(self) -> None:
         """
@@ -181,6 +206,8 @@ class Traffic(Model):
         self.step_count += 1
 
         self.spawn_cars()
+        self.finished_car_steps_int = self.calc_finished_car_steps()
+        self.finished_car_wait_int = self.calc_finished_car_wait()
         self.datacollector.collect(self)
         self.schedule.step()
 
