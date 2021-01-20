@@ -119,7 +119,7 @@ class Traffic(Model):
                 all_lane_nodes[lane_id] = []
                 if lane['nodes'][0]['attribute'] == 'stopLine':
                     stop_line_lane = True
-                    connecting_lane = lane['connectsTo']['lane']
+                    conpathnecting_lane = lane['connectsTo']['lane']
                     lane_info = {
                         'in': {
                             'nodes': []

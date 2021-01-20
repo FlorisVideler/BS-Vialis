@@ -15,16 +15,16 @@ class TimeText(TextElement):
     def __init__(self):
         pass
 
-    def render(self, model):
+    def render(self, model: Model) -> str:
         #Renders time
         return "Time: " + model.data_time
 
 
-def draw(agent):
+def draw(agent: Agent) -> dict:
     """
-        Changes an agent
-        :param agent: Acknowledges an agent
-        :return: The type of the agent
+    Changes an agent
+    :param agent: Acknowledges an agent
+    :return: The type of the agent
     """
     if agent.agent_type == "node":
         return draw_node(agent)
@@ -39,23 +39,23 @@ def draw(agent):
     return {"Shape": "rect", "Filled": "true", "Color": "Cyan", "w": 8, "h": 8}
 
 
-def draw_car(car):
+def draw_car(car: Car) -> dict:
     """
-        Checks if a car object is active.
-        :param car: Acknowledges the object.
-        :return: Changes color and shape or kills the car if it is inactive.
+    Checks if a car object is active.
+    :param car: Acknowledges the object.
+    :return: Changes color and shape or kills the car if it is inactive.
     """
     if car.active:
-        return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 6, "h": 6}
+        return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 7.671633005114958, "h": 7.671633005114958}
     else:
         return {}
 
 
-def draw_sensor(sensor):
+def draw_sensor(sensor: Sensor) -> dict:
     """
-        Changes sensor color based on whether it is activated or not.
-        :param sensor: Acknowledges the object.
-        :return: Changes color and shape based on whether it is activated or not.
+    Changes sensor color based on whether it is activated or not.
+    :param sensor: Acknowledges the object.
+    :return: Changes color and shape based on whether it is activated or not.
     """
     if sensor.state == 0:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 255, 0.5)", "x1": sensor.start_pos[0],
@@ -65,11 +65,11 @@ def draw_sensor(sensor):
                 "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
 
 
-def draw_road(road):
+def draw_road(road: Road) -> dict:
     """
-        Creates temporary roads which show on green and yellow light.
-        :param road: Acknowledges the object.
-        :return: A color of the current light of the lane.
+    Creates temporary roads which show on green and yellow light.
+    :param road: Acknowledges the object.
+    :return: A color of the current light of the lane.
     """
     if "reg" in road.lane_id:
         if road.light is None:
@@ -89,11 +89,11 @@ def draw_road(road):
                 "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
 
 
-def draw_node(node):
+def draw_node(node: Node) -> dict:
     """
-        Like road, changes color based on current light state.
-        :param node: Acknowledges the object.
-        :return: Changes color based on if the light is on or not.
+    Like road, changes color based on current light state.
+    :param node: Acknowledges the object.
+    :return: Changes color based on if the light is on or not.
     """
     if node.reg:
         if node.light.state == 0:
@@ -106,7 +106,12 @@ def draw_node(node):
         return {"Shape": "rect", "Filled": "true", "Color": "Red", "w": 2, "h": 2}
 
 
-def draw_light(light):
+def draw_light(light: Light) -> dict:
+    """
+    Changes color based on actual color of light.
+    :param light: Acknowledges the object.
+    :return: Changes color based on which light is on.
+    """
     if light.state == 2:
         return {"Shape": "rect", "Filled": "true", "Color": "Green", "w": 8, "h": 8}
     elif light.state == 1:
