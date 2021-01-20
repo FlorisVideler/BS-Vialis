@@ -3,14 +3,18 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
+# Sets a universal and local directory path to move files
 main_path = os.path.dirname(os.path.realpath(__file__))
 main_path = (os.path.normpath(main_path + os.sep + os.pardir))
-print(main_path)
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-def normalize(array):
-    # Normalises an array so it fits between 0 and 1.
+
+def normalize(array: list) -> list:
+    """
+    Normalises an array so it fits between 0 and 1.
+    :param array: A list filled with coordinates.
+    :return: A list with normalized coordinates.
+    """
     min_array = min(array)
     max_array = max(array)
     z = []
@@ -20,26 +24,46 @@ def normalize(array):
     return z
 
 
-def convert_time(x):
+def convert_time(x: str) -> str:
+    """
+        Converts the time so it uses UTC and fits with current timezone.
+        Also makes a date look more like a date.
+        :param x: A specified time in data, London time.
+        :return: Date in dutch time.
+        """
     # Converts the time so it uses UTC and fits with current timezone.
     from_zone = tz.tzutc()
     to_zone = tz.tzlocal()
-    utc = datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
 
+    # Removes 'T' and 'Z' in data
+    utc = datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
     utc = utc.replace(tzinfo=from_zone)
 
+    # Changes order of date and adds microseconds
     central = utc.astimezone(to_zone)
     central = central.strftime('%d-%m-%Y %H:%M:%S.%f')
     return central
 
 
-def load_data(path):
+def load_data(path: str) -> str:
+    """
+        Loads the data from a path
+        :param path: file name.
+        :return: loaded data of designated file.
+        """
     # Loads the json file of that path.
     with open(dir_path + '/output/' + path) as json_file:
         return json.load(json_file)
 
 
-def write_data(path, data, sim):
+def write_data(path: str, data: list, sim: bool):
+    """
+        Writes data to a path
+        :param path: file to be created.
+        :param data: file name.
+        :param sim: if it's for simulation or for visualization
+        :return: None
+        """
     if sim:
         with open(main_path + "/traffic_model/simulation/data/" + path, 'w') as fp:
             json.dump(data, fp, indent=4)
@@ -49,6 +73,14 @@ def write_data(path, data, sim):
 
 
 def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, sim=False):
+    """
+            Processes all data
+            :param lanes_to_process: All the intersections that need to be processed
+            :param sensors_to_process: All the sensors from intersections that need to be processed
+            :param niels: geographic data of our own research
+            :param sim: if it's for simulation or for visualization
+            :return: None
+            """
     all_x = []
     all_y = []
     all_lanes = []
@@ -57,6 +89,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     total_df_len = 0
     index = 0
     if sim:
+        # Checks if it is for the simulation or the visualisation
         lanes_to_process = ['laneset_BOS210.json']
         sensors_to_process = ['sensors_list_BOS210.json']
         niels = []
@@ -118,6 +151,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
                 index += 2
         write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data, sim)
 
+    # Adds geo routes, and normalises them before processing.
     df_lat = norm_x[-total_df_len:]
     df_lon = norm_y[-total_df_len:]
     index = 0
@@ -129,6 +163,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
         write_data(f'route{route_index}.json', json_obj, sim=False)
 
 
+# Input files
 lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
 sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
 geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]

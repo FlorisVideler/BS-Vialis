@@ -1,7 +1,5 @@
-import numpy as np
 import pandas as pd
 import json
-import random
 
 from mesa import Model
 from mesa.space import ContinuousSpace
@@ -27,20 +25,19 @@ sensor_data = sensors_list_BOS210 + sensors_list_BOS211
 
 
 class Traffic(Model):
-    # TODO: CHECK DEZE TIJDEN?!?!?!?!??!?!?!??!?!?!??!?!
     route_dict = {
-            0: 433570,  # 12:02:37.0
-            1: 435310,  # 12:05:31.0
-            2: 438430,
-            3: 440810,
-            4: 441910,
-            5: 463570,
-            6: 464830,
-            7: 467240,
-            8: 470310,
-            9: 472630,
-            10: 478650
-        }
+        0: 433570,  # 12:02:37.0
+        1: 435310,  # 12:05:31.0
+        2: 438430,
+        3: 440810,
+        4: 441910,
+        5: 463570,
+        6: 464830,
+        7: 467240,
+        8: 470310,
+        9: 472630,
+        10: 478650
+    }
 
     def __init__(
             self,
@@ -48,7 +45,8 @@ class Traffic(Model):
             width=100,
             height=100,
     ):
-        self.data = self.load_data({'BOS210': 'visualization/data/BOS210.csv', 'BOS211': 'visualization/data/BOS211.csv'})
+        self.data = self.load_data(
+            {'BOS210': 'visualization/data/BOS210.csv', 'BOS211': 'visualization/data/BOS211.csv'})
         self.geo_data = self.load_geo_data(route)
         self.step_count = self.route_dict[route]
         self.real_step_count = 0
@@ -61,12 +59,17 @@ class Traffic(Model):
         self.running = True
         self.niels_car()
 
-    def load_data(self, path, sep=';'):
+    def load_data(self, path: dict, sep: str = ';') -> dict:
+        """
+        Loads the data for all the intersections.
+        :param path: All the paths to the files.
+        :param sep: The seperator fot the CSV files.
+        :return: Dict with all the data loaded.
+        """
         data_dict = {}
         for file in path:
             data_dict[file] = pd.read_csv(path[file], sep=sep)
         return data_dict
-
 
     def read_row_col(self, intersection, col):
         """
@@ -91,33 +94,16 @@ class Traffic(Model):
         self.step_count += 1
         self.real_step_count += 1
 
-    def niels_car(self):
-        print(self.space.x_max, self.space.y_max)
+    def niels_car(self) -> None:
+        """
+        Makes the car that Niels is driving.
+        :return: None.
+        """
         pos = self.geo_data[0][0] * self.space.x_max, self.geo_data[0][1] * self.space.y_max
-        niels = NielsCar(69420, self, pos, self.geo_data)
+        niels = Car(69420, self, pos, self.geo_data)
         self.place_agent(niels, pos)
 
-    def just_test_one_car(self):
-        print(list(self.lanes.keys()))
-        lane = random.choice(list(self.lanes.keys()))
-        print(lane)
-        ln = []
-        ln_pos = []
-        list_nodes = self.lanes[lane]['in']['nodes'] + self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']
-        for i in self.lanes[lane]['in']['nodes']:
-            ln.append(i)
-            ln_pos.append(i.pos)
-        for i in self.lanes[lane]['conn']['nodes'] + self.lanes[lane]['out']['nodes']:
-            if i.pos not in ln_pos:
-                ln.append(i)
-                ln_pos.append(i.pos)
-
-        ln.append(list_nodes[len(list_nodes) - 1])
-        car = Car(69420, self, self.lanes[lane]['in']['nodes'][0].pos, ln, 0, self.lanes[lane]['in']['nodes'][0],
-                  self.lanes[lane]['in']['nodes'][1], self.lanes[lane]['out']['nodes'][-1])
-        self.place_agent(car, self.lanes[lane]['in']['nodes'][0].pos)
-
-    def make_intersection(self):
+    def make_intersection(self) -> dict:
         """
         Function that basically makes the whole intersection: the roads, all the nodes
         and all the traffic lights.
@@ -226,10 +212,10 @@ class Traffic(Model):
 
         return lanes
 
-    def make_sensors(self):
+    def make_sensors(self) -> None:
         """
         Function that places all the sensors.
-        :return: None
+        :return: None.
         """
         for sensor in sensor_data:
             if sensor['sensorDeviceType'] == 'inductionLoop':
@@ -237,15 +223,16 @@ class Traffic(Model):
                     1] * self.space.y_max
                 end_pos = sensor['sensorRefPos'][1][0] * self.space.x_max, sensor['sensorRefPos'][1][
                     1] * self.space.y_max
-                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'], sensor['laneID'], sensor['distance'], sensor['intersectionName'])
+                agent = Sensor(self.placed_agent_count, self, start_pos, start_pos, end_pos, 0, sensor['name'],
+                               sensor['laneID'], sensor['distance'], sensor['intersectionName'])
                 self.place_agent(agent, start_pos)
 
-    def place_agent(self, agent, pos):
+    def place_agent(self, agent: Agent, pos: tuple) -> None:
         """
         Function that places an agent on the space and adds it to the schedule.
         :param agent: The agent to add.
-        :param pos: Where to add the agent.
-        :return: None
+        :param pos: Where to add the agent. x, y.
+        :return: None.
         """
         self.space.place_agent(agent, pos)
         self.schedule.add(agent)
