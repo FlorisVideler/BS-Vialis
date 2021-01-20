@@ -19,7 +19,7 @@ with open(dir_path + r'\data\sensors_done_BOS210.json') as json_file:
     sensor_data = json.load(json_file)
 
 # Loads all the information about the signalgroups.
-with open(dir_path + r'\data\sgr.json') as json_file:
+with open(dir_path + r'\data\signalgroup_BOS210.json') as json_file:
     sgr_data = json.load(json_file)
 
 # Load the actication data (sensors and traffic light.
