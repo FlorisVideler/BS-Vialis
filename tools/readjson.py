@@ -3,10 +3,9 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
+#Sets a universal and local directory path to move files
 main_path = os.path.dirname(os.path.realpath(__file__))
 main_path = (os.path.normpath(main_path + os.sep + os.pardir))
-print(main_path)
-
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 def normalize(array):
@@ -57,6 +56,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     total_df_len = 0
     index = 0
     if sim:
+        #Checks if it is for the simulation or the visualisation
         lanes_to_process = ['laneset_BOS210.json']
         sensors_to_process = ['sensors_list_BOS210.json']
         niels = []
@@ -118,6 +118,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
                 index += 2
         write_data(f'sensors_done_{sensors_data[0]["intersectionName"]}.json', sensors_data, sim)
 
+    # Adds geo routes, and normalises them before processing.
     df_lat = norm_x[-total_df_len:]
     df_lon = norm_y[-total_df_len:]
     index = 0
@@ -128,7 +129,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
             index += 1
         write_data(f'route{route_index}.json', json_obj, sim=False)
 
-
+# Input files
 lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
 sensors = ['sensors_list_BOS210.json', 'sensors_list_BOS211.json']
 geo_routes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
