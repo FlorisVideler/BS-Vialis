@@ -1,7 +1,7 @@
 import unittest
 from tools.XML_tool import *
 
-file = '79190154_BOS210_ITF_COMPLETE.xml'
+file = '../../tools/input/79190154_BOS210_ITF_COMPLETE.xml'
 
 
 class MyTestCases(unittest.TestCase):
