@@ -4,18 +4,28 @@ from XML_tool import *
 files = ['input/79190154_BOS210_ITF_COMPLETE.xml', 'input/7919015E_BOS211_ITF_COMPLETE.xml']
 
 for file in files:
-    tree = ET.parse(file)
-    root = tree.getroot()
+    root = load_data(file)
 
     lane_set = []
 
     signal_dict = {}
+
+    sgr_dict = {}
 
     for sg in root.findall('.//sg'):
         signal_dict[sg.find('signalGroup').text] = sg.find('name').text
 
     intersection_geometry = root.find('.//intersectionGeometry')
     intersection_name = intersection_geometry.find('name').text
+
+    # Retrieves signalgroup information
+    for sgr in root.findall('.//signalGroupRelation'):
+        from_sg = signal_dict[sgr.find('fromSignalGroup').text]
+        to_sg = signal_dict[sgr.find('toSignalGroup').text]
+        clear_time = sgr.find('clearanceTime').text
+        if from_sg not in sgr_dict:
+            sgr_dict[from_sg] = {}
+        sgr_dict[from_sg][to_sg] = clear_time
 
     # Retrieves laneID and Name
     for generic_Lane in root.findall('.//genericLane'):
@@ -123,5 +133,8 @@ for file in files:
 
     with open(f'output/laneset_{intersection_name}.json', 'w') as fp:
         json.dump(lane_set, fp, indent=4)
+
+    with open(f'output/signalgroup_{intersection_name}.json', 'w') as fp:
+        json.dump(sgr_dict, fp, indent=4)
 
 
