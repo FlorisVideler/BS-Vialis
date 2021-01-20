@@ -106,7 +106,6 @@ class Traffic(Model):
     def calc_finished_car_steps(self) -> int:
         """
         Calculates the average amount of steps that a car needed to take to get to the end.
-        :param model: The Mesa model
         :return: The average amount of steps a car takes.
         """
         # Checks if cars are not moving
@@ -118,7 +117,6 @@ class Traffic(Model):
     def calc_finished_car_wait(self) -> int:
         """
         Calculates the average amount of steps a car is waiting for a red light.
-        :param model: The Mesa model
         :return: The average amount a car waits.
         """
         # Checks if cars are waiting
@@ -146,7 +144,7 @@ class Traffic(Model):
 
     def manipulate_traffic_light_data(self, lights: dict) -> None:
         """
-        Edit's the timing of the traffic lights.
+        Calculates how many steps the traffic light need to be on for.
         :param lights: A dictionary with the setting of the traffic light.
         :return: None
         """
@@ -168,32 +166,39 @@ class Traffic(Model):
                                     orange_value = self.data[light][orange_index]
                                 except:
                                     break
-                            to_replace.append([index + self.step_count, np.round(increase_info), orange_index + np.round(increase_info)])
+                            to_replace.append([index + self.step_count, int(np.round(increase_info)), orange_index + np.round(increase_info)])
                         streak = 0
                 if len(to_replace) > 1:
                     to_replace.pop()
                 for i in to_replace:
                     self.check_and_replace_timings(i[0], i[1], i[2], light)
 
-    def check_and_replace_timings(self, replace_index, increase, orange, light):
+    def check_and_replace_timings(self, replace_index: int, increase: int, orange: int, light: str) -> None:
+        """
+        Exutaly replaces the timings of the traffic lights. Also makes sure the other lights still work fine.
+        :param replace_index: At what index does the replace start.
+        :param increase: How many steps does the light need to be on extra.
+        :param orange: How long was the light orange.
+        :param light: The light ID.
+        :return: None
+        """
         for col in self.data.columns:
             if col in self.sgr_data[light]:
                 crosses = []
-                for c in range(replace_index, replace_index+int(increase)):
+                for c in range(replace_index, replace_index+increase):
                     if self.data[col][c] == 'Z' or self.data[col][c] == '#':
                         crosses.append(c)
                 if len(crosses) > 0:
                     crosses.append(crosses[-1] + int(self.sgr_data[light][col]) * 10)
                     self.data.loc[crosses[0]: crosses[-1], col] = np.nan
-        for j in self.data.columns:
-            if j in self.sgr_data[light]:
-                for index in range(int(increase)):
-                    if self.data[j][index + replace_index] == '#' or self.data[j][index + replace_index] == 'Z':
-                        print(self.data[j][index + replace_index])
-                        print(light, 'IS IN THE WAY OF', j, index + replace_index)
+        # TODO: CAN DIS GO?
+        # for j in self.data.columns:
+        #     if j in self.sgr_data[light]:
+        #         for index in range(int(increase)):
+        #             if self.data[j][index + replace_index] == '#' or self.data[j][index + replace_index] == 'Z':
+        #                 print(self.data[j][index + replace_index])
+        #                 print(light, 'IS IN THE WAY OF', j, index + replace_index)
 
-        # print('makin green', replace_index, replace_index + increase, light)
-        # print('makin orange', replace_index + increase, orange, light)
         self.data.loc[replace_index:replace_index + increase, light] = '#'
         self.data.loc[replace_index + increase: orange, light] = 'Z'
 
