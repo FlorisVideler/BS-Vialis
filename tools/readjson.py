@@ -3,7 +3,7 @@ import pandas as pd
 from datetime import datetime
 from dateutil import tz
 
-#Sets a universal and local directory path to move files
+# Sets a universal and local directory path to move files
 main_path = os.path.dirname(os.path.realpath(__file__))
 main_path = (os.path.normpath(main_path + os.sep + os.pardir))
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -39,7 +39,7 @@ def convert_time(x: str) -> str:
     utc = datetime.strptime(x, '%Y-%m-%dT%H:%M:%SZ')
     utc = utc.replace(tzinfo=from_zone)
 
-    #Changes order of date and adds microseconds
+    # Changes order of date and adds microseconds
     central = utc.astimezone(to_zone)
     central = central.strftime('%d-%m-%Y %H:%M:%S.%f')
     return central
@@ -89,7 +89,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
     total_df_len = 0
     index = 0
     if sim:
-        #Checks if it is for the simulation or the visualisation
+        # Checks if it is for the simulation or the visualisation
         lanes_to_process = ['laneset_BOS210.json']
         sensors_to_process = ['sensors_list_BOS210.json']
         niels = []
@@ -161,6 +161,7 @@ def process_lanes_and_sensors(lanes_to_process, sensors_to_process, niels=None, 
             json_obj.append([df_lat[index], df_lon[index]])
             index += 1
         write_data(f'route{route_index}.json', json_obj, sim=False)
+
 
 # Input files
 lanes = ['laneset_BOS210.json', 'laneset_BOS211.json']
