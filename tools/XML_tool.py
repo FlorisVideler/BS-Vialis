@@ -1,10 +1,13 @@
 from xml.etree import ElementTree as ET
-import os
-dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def load_data():
-    tree = ET.parse(dir_path + '/79190154_BOS210_ITF_COMPLETE.xml')
+def load_data(file: str) -> object:
+    """
+    loads the Xml-files
+    :param file: filename
+    :return: the root
+    """
+    tree = ET.parse(file)
     root = tree.getroot()
     return root
 
@@ -22,7 +25,7 @@ def format_lat_lon(la: str, lo: str) -> tuple:
     return la, lo
 
 
-def lane_type(lane_attributes: str) -> str:
+def lane_type(lane_attributes: object) -> str:
     """
     This function retrieves the lane type.
     :param lane_attributes: location to find info about the lane including lanetype
@@ -46,7 +49,7 @@ def lane_type(lane_attributes: str) -> str:
     return type_lane
 
 
-def func_connects_to(connects_to: str, signal_dict: dict) -> dict:
+def func_connects_to(connects_to: object, signal_dict: dict) -> dict:
     """
     This function retrieves and adds the connection_id to the dict.
     :param connects_to: info about the relations between lanes
@@ -68,7 +71,7 @@ def func_connects_to(connects_to: str, signal_dict: dict) -> dict:
     return connects_to_dict
 
 
-def func_regional(regional: str) -> list:
+def func_regional(regional: object) -> list:
     """
     This function retrieves the latitude and longitude in regional.
     :param regional: nodes
@@ -89,7 +92,7 @@ def func_regional(regional: str) -> list:
     return nodes_regional_list
 
 
-def func_sensor_position(sensor_position: str) -> tuple:
+def func_sensor_position(sensor_position: object) -> tuple:
     """
     This function retrieves the starting and ending position of a specific sensor and formats it.
     :param sensor_position: latitude and longitude

@@ -4,8 +4,7 @@ from XML_tool import *
 files = ['input/79190154_BOS210_ITF_COMPLETE.xml', 'input/7919015E_BOS211_ITF_COMPLETE.xml']
 
 for file in files:
-    tree = ET.parse(file)
-    root = tree.getroot()
+    root = load_data(file)
 
     lane_set = []
 
