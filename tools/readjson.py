@@ -8,8 +8,13 @@ main_path = os.path.dirname(os.path.realpath(__file__))
 main_path = (os.path.normpath(main_path + os.sep + os.pardir))
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-def normalize(array):
-    # Normalises an array so it fits between 0 and 1.
+
+def normalize(array: list) -> list:
+    """
+    Normalises an array so it fits between 0 and 1.
+    :param array: A list filled with coordinates.
+    :return: A list with normalized coordinates.
+    """
     min_array = min(array)
     max_array = max(array)
     z = []
