@@ -6,11 +6,11 @@ import numpy as np
 def get_next_point(curr_point: tuple, target_point: tuple, distance_between_points: float, distance: float) -> tuple:
     """
     Calculates the next point from a current point, based on an end point.
-    :param curr_point: current coordinates
-    :param target_point: target coordinates
-    :param distance_between_points: distance between current point and target point
-    :param distance: distance you want to travel
-    :return: the next coordinates, distance between next point en target point
+    :param curr_point: current coordinates.
+    :param target_point: target coordinates.
+    :param distance_between_points: distance between current point and target point.
+    :param distance: distance you want to travel.
+    :return: the next coordinates, distance between next point en target point.
     """
     x = target_point[0] - curr_point[0]
     y = target_point[1] - curr_point[1]
@@ -81,7 +81,12 @@ class Car(Agent):
             50km/h =  2.2889464748522967 px per step
         '''
 
-    def get_next_car(self, radius):
+    def get_next_car(self, radius: int) -> tuple:
+        """
+        Gets the next car object and the distance to it.
+        :param radius: How far do we scan for the next car.
+        :return: A tuple with a car object and how far away it is. If there are no cars found, None is returned.
+        """
         neighbors = self.model.space.get_neighbors(self.pos, radius, False)
         dist_to_end = math.dist(self.pos, self.end_node.pos)
         cars_in_front = {}
@@ -98,16 +103,28 @@ class Car(Agent):
         else:
             return None
 
-    def get_distance_to_light(self):
-        # Gets the distance from self to traffic light
+    def get_distance_to_light(self) -> tuple:
+        """
+        Calculates distance from self to traffic light.
+        :return: A tuple with the distance to the light and the state of the light.
+        """
         return math.dist(self.pos, self.lane[0].light.pos), self.lane[0].light.state
 
-    def move_agent(self, new_pos):
+    def move_agent(self, new_pos: tuple) -> None:
+        """
+        Moves the agent to the new position.
+        :param new_pos: a tuple with x, y position.
+        :return: None.
+        """
         # Moves agent
         self.pos = new_pos
         self.model.space.move_agent(self, new_pos)
 
-    def get_next_node(self):
+    def get_next_node(self) -> bool:
+        """
+        Checks if there is another node to move to.
+        :return: True if a next node is found, False if not.
+        """
         # Gets the next node to move to
         self.current_node = self.next_node
         if self.current_node == self.end_node:
@@ -115,20 +132,31 @@ class Car(Agent):
         self.next_node = self.lane[self.node_index + 2]
         return True
 
-    def stop_car(self):
+    def stop_car(self) -> None:
+        """
+        Stops the car and submits all the statistics.
+        :return: None.
+        """
         # Stops car
         self.model.finished_car_steps.append(self.steps_active)
         self.model.finished_car_wait.append(self.wait_at_light)
         self.active = False
 
-    def red_light(self):
-        # Checks if the car is on the stopline and the light is red, in which case it will stop
+    def red_light(self) -> bool:
+        """
+        Function that checks if the car is in front of a red light and is already at the stop line.
+        :return: True if car is standing at a red light, otherwise return False.
+        """
         if self.current_node.stop_line and self.current_node.light.state == 0:
             return True
         else:
             return False
 
-    def check_light_distance(self):
+    def check_light_distance(self) -> None:
+        """
+        Checks if the car is approaching a red light, if so brake.
+        :return: None
+        """
         dist_to_light = self.get_distance_to_light()
         if dist_to_light[0] <= 80 and dist_to_light[1] == 0:  # 80px = 48.54246804450987m
             self.current_speed -= (self.acceleration / 2)
@@ -136,13 +164,21 @@ class Car(Agent):
             if self.current_speed < self.max_speed:
                 self.current_speed += self.acceleration
 
-    def check_next_car(self):
+    def check_next_car(self) -> None:
+        """
+        Checks if there is a car in front of self, if so brake so you don't end up in another cars trunk.
+        :return: None.
+        """
         next_car = self.get_next_car(60)
         if next_car:
             if next_car[1] <= self.current_speed + 15:  # 15px = 9.1017127583456m
                 self.current_speed = next_car[1] - 15  # Hier moet nog een getal vanaf
 
-    def move_to_next_node(self):
+    def move_to_next_node(self) -> bool:
+        """
+        Gets the next node for a car to move to, if available.
+        :return: If a node is available: True, else False.
+        """
         if not self.get_next_node():
             self.stop_car()
             return False
@@ -151,11 +187,18 @@ class Car(Agent):
         self.distance_to_next_node = math.dist(self.pos, self.next_node.pos)
         return True
 
-    def advance(self):
+    def advance(self) -> None:
+        """
+        A function that Mesa requires to work, moves the agent.
+        :return: None.
+        """
         self.move_agent(self.next_pos)
 
-    def step(self):
-
+    def step(self) -> None:
+        """
+        A function that Mesa requires, takes care of all the car logic.
+        :return: None
+        """
         if self.active:
             self.steps_active += 1
             if not self.red_light():
@@ -226,15 +269,13 @@ class Sensor(Agent):
         self.end_pos = end_pos
         self.lane_id = lane_id
         self.distance_from_light = distance_from_light
-        self.light = self.get_light_from_lane()
 
-    def get_light_from_lane(self):
-        #Checks the state of the light on *this* lane
-        if self.lane_id in self.model.lanes:
-            return self.model.lanes[self.lane_id]['in']['nodes'][0].light
-        return None
-
-    def car_on_sensor(self, threshold: int = 8):
+    def car_on_sensor(self, threshold: int = 8) -> bool:
+        """
+        Function that checks if a car if on sensor.
+        :param threshold: How much space between the center of the sensor and the car.
+        :return: If there is a car on sensor: True, else False.
+        """
         neighbors = self.model.space.get_neighbors(np.average(np.array([self.start_pos, self.end_pos]), axis=0), 10,
                                                    True)
         for car in neighbors:
@@ -247,7 +288,11 @@ class Sensor(Agent):
         self.model.sensor_on_no_car += 1
         return False
 
-    def step(self):
+    def step(self) -> None:
+        """
+        Mesa requires this function. Takes care of all the sensor logic.
+        :return: None.
+        """
         data_state = self.model.read_row_col(self.sensor_id)
         if data_state != "|":
             self.state = 0
@@ -273,7 +318,11 @@ class Light(Agent):
         self.agent_type = agent_type
         self.light_id = light_id
 
-    def step(self):
+    def step(self) -> None:
+        """
+        Mesa requires this function. Takes care of all the light logic.
+        :return: None.
+        """
         data_state = self.model.read_row_col(self.light_id)
         if data_state == '#':
             self.state = 2
