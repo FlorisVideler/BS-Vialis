@@ -21,7 +21,11 @@ class TimeText(TextElement):
 
 
 def draw(agent):
-    #Creates the visual agents
+    """
+        Changes an agent
+        :param agent: Acknowledges an agent
+        :return: The type of the agent
+    """
     if agent.agent_type == "node":
         return draw_node(agent)
     if agent.agent_type == "sensor":
@@ -36,7 +40,11 @@ def draw(agent):
 
 
 def draw_car(car):
-    # Kills the car if it is not active
+    """
+        Checks if a car object is active.
+        :param car: Acknowledges the object.
+        :return: Changes color and shape or kills the car if it is inactive.
+    """
     if car.active:
         return {"Shape": "rect", "Filled": "true", "Color": "Black", "w": 6, "h": 6}
     else:
@@ -44,7 +52,11 @@ def draw_car(car):
 
 
 def draw_sensor(sensor):
-    #Changes sensor color based on if it is on or not.
+    """
+        Changes sensor color based on whether it is activated or not.
+        :param sensor: Acknowledges the object.
+        :return: Changes color and shape based on whether it is activated or not.
+    """
     if sensor.state == 0:
         return {"Shape": "line", "Filled": "true", "Color": "rgba(0, 0, 255, 0.5)", "x1": sensor.start_pos[0],
                 "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
@@ -54,7 +66,11 @@ def draw_sensor(sensor):
 
 
 def draw_road(road):
-    # Creates a connecting road based on current cars driving from lights to destination.
+    """
+        Creates temporary roads which show on green and yellow light.
+        :param road: Acknowledges the object.
+        :return: A color of the current light of the lane.
+    """
     if "reg" in road.lane_id:
         if road.light is None:
             return {"Shape": "line", "Filled": "true", "Color": "Red", "x1": road.start_node.pos[0],
@@ -74,6 +90,11 @@ def draw_road(road):
 
 
 def draw_node(node):
+    """
+        Like road, changes color based on current light state.
+        :param node: Acknowledges the object.
+        :return: Changes color based on if the light is on or not.
+    """
     if node.reg:
         if node.light.state == 0:
             return {"Shape": "rect", "Filled": "true", "Color": "rgba(102, 178, 118, 0)", "w": 2, "h": 2}
