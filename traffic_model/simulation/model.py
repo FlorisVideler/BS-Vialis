@@ -27,6 +27,20 @@ activation_data = pd.read_csv(dir_path + r'\data\BOS210.csv', sep=';')
 
 
 class Traffic(Model):
+    """
+    A class used to represent a Traffic model.
+    Attributes:
+        placed_agent_count: The amount of agents placed in simulation.
+        sgr_data: The signal group relations data.
+        light_dict: The light witht the lane as value.
+        data: The sensor and traffic light data.
+        finished_car_steps: A list with all the finished cars step amounts.
+        finished_car_wait:A list with all the finished cars wait step amounts.
+        finished_car_steps_int: The average steps it takes a car to get to it's end point.
+        finished_car_wait_int: The average steps a car waits at a red light..
+        max_steps: The max amount of steps the simulation will run.
+        step_count: The amount of steps the simulation is running for.
+    """
     # TODO: Document and refactor this class.
     placed_agent_count = 0
     sgr_data = sgr_data
@@ -34,19 +48,32 @@ class Traffic(Model):
 
     def __init__(
             self,
-            light_11=0,
-            light_12=0,
-            light_01=0,
-            light_03=0,
-            light_41=0,
-            light_04=0,
-            light_05=0,
-            all_lights=0,
-            width=100,
-            height=100,
-            max_steps=72000,
-            start=468000
+            light_11: int = 0,
+            light_12: int = 0,
+            light_01: int = 0,
+            light_03: int = 0,
+            light_41: int = 0,
+            light_04: int = 0,
+            light_05: int = 0,
+            width: int = 100,
+            height: int = 100,
+            max_steps: int = 72000,
+            start: int = 468000
     ):
+        """
+        Constructor for the Traffic class.
+        :param light_11: The percentage this light's green time is increased.
+        :param light_12: The percentage this light's green time is increased.
+        :param light_01: The percentage this light's green time is increased.
+        :param light_03: The percentage this light's green time is increased.
+        :param light_41: The percentage this light's green time is increased.
+        :param light_04: The percentage this light's green time is increased.
+        :param light_05: The percentage this light's green time is increased.
+        :param width: The width of the model.
+        :param height: The height of the model.
+        :param max_steps: The max amount of steps the simulation will run.
+        :param start: The time the simulation starts at, in steps.
+        """
         self.data = activation_data.copy()
         self.finished_car_steps = []
         self.finished_car_wait = []
@@ -61,26 +88,15 @@ class Traffic(Model):
         self.make_sensors()
 
         # Traffic light setting
-        if all_lights > 0:
-            light_setting = {
-                '11': all_lights,
-                '12': all_lights,
-                '01': all_lights,
-                '03': all_lights,
-                '41': all_lights,
-                '04': all_lights,
-                '05': all_lights
-            }
-        else:
-            light_setting = {
-                '11': light_11,
-                '12': light_12,
-                '01': light_01,
-                '03': light_03,
-                '41': light_41,
-                '04': light_04,
-                '05': light_05
-            }
+        light_setting = {
+            '11': light_11,
+            '12': light_12,
+            '01': light_01,
+            '03': light_03,
+            '41': light_41,
+            '04': light_04,
+            '05': light_05
+        }
         self.manipulate_traffic_light_data(light_setting)
 
         # Sensor accuracy tracker
@@ -165,7 +181,8 @@ class Traffic(Model):
                                     orange_value = self.data[light][orange_index]
                                 except:
                                     break
-                            to_replace.append([index + self.step_count, int(np.round(increase_info)), orange_index + np.round(increase_info)])
+                            to_replace.append([index + self.step_count, int(np.round(increase_info)),
+                                               orange_index + np.round(increase_info)])
                         streak = 0
                 if len(to_replace) > 1:
                     to_replace.pop()
@@ -184,7 +201,7 @@ class Traffic(Model):
         for col in self.data.columns:
             if col in self.sgr_data[light]:
                 crosses = []
-                for c in range(replace_index, replace_index+increase):
+                for c in range(replace_index, replace_index + increase):
                     if self.data[col][c] == 'Z' or self.data[col][c] == '#':
                         crosses.append(c)
                 if len(crosses) > 0:
