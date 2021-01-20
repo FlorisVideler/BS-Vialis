@@ -1,0 +1,837 @@
+[
+    {
+        "sensorID": "1",
+        "name": "011",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831035",
+                "5.2943401"
+            ],
+            [
+                "51.6830883",
+                "5.2943692"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6830938",
+            "5.2943482"
+        ],
+        "length": "100",
+        "laneID": "7",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "2",
+        "name": "012",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831320",
+                "5.2944832"
+            ],
+            [
+                "51.6831652",
+                "5.2945858"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831526",
+            "5.2945312"
+        ],
+        "length": "800",
+        "laneID": "7",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "3",
+        "name": "013",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831817",
+                "5.2946370"
+            ],
+            [
+                "51.6832564",
+                "5.2948678"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6832230",
+            "5.2947491"
+        ],
+        "length": "1800",
+        "laneID": "7",
+        "distance": "2400",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "4",
+        "name": "014",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6833432",
+                "5.2950887"
+            ],
+            [
+                "51.6833272",
+                "5.2951021"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6833331",
+            "5.2950890"
+        ],
+        "length": "100",
+        "laneID": "7",
+        "distance": "5900",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "5",
+        "name": "031",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6830764",
+                "5.2943600"
+            ],
+            [
+                "51.6830611",
+                "5.2943890"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6830667",
+            "5.2943681"
+        ],
+        "length": "100",
+        "laneID": "8",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "6",
+        "name": "032",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831054",
+                "5.2945053"
+            ],
+            [
+                "51.6831387",
+                "5.2946079"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831260",
+            "5.2945532"
+        ],
+        "length": "800",
+        "laneID": "8",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "7",
+        "name": "033",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6832300",
+                "5.2948900"
+            ],
+            [
+                "51.6831553",
+                "5.2946592"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831966",
+            "5.2947713"
+        ],
+        "length": "1800",
+        "laneID": "8",
+        "distance": "2400",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "8",
+        "name": "034",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6833167",
+                "5.2951108"
+            ],
+            [
+                "51.6833008",
+                "5.2951242"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6833067",
+            "5.2951111"
+        ],
+        "length": "100",
+        "laneID": "8",
+        "distance": "5900",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "9",
+        "name": "041",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6828022",
+                "5.2942513"
+            ],
+            [
+                "51.6828152",
+                "5.2942811"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6828131",
+            "5.2942647"
+        ],
+        "length": "100",
+        "laneID": "13",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "10",
+        "name": "042",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6826853",
+                "5.2942924"
+            ],
+            [
+                "51.6826488",
+                "5.2942951"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6826856",
+            "5.2942985"
+        ],
+        "length": "800",
+        "laneID": "13",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "11",
+        "name": "043",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6826216",
+                "5.2942953"
+            ],
+            [
+                "51.6825842",
+                "5.2942915"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6825839",
+            "5.2942976"
+        ],
+        "length": "600",
+        "laneID": "13",
+        "distance": "2800",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "12",
+        "name": "044",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6817327",
+                "5.2940977"
+            ],
+            [
+                "51.6817303",
+                "5.2941264"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6817358",
+            "5.2941130"
+        ],
+        "length": "100",
+        "laneID": "13",
+        "distance": "12100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "13",
+        "name": "051",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6827933",
+                "5.2941986"
+            ],
+            [
+                "51.6828063",
+                "5.2942284"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6828042",
+            "5.2942121"
+        ],
+        "length": "100",
+        "laneID": "14",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "14",
+        "name": "052",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6826830",
+                "5.2942419"
+            ],
+            [
+                "51.6826482",
+                "5.2942445"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6826833",
+            "5.2942481"
+        ],
+        "length": "800",
+        "laneID": "14",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "15",
+        "name": "053",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6826227",
+                "5.2942447"
+            ],
+            [
+                "51.6825871",
+                "5.2942411"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6825868",
+            "5.2942472"
+        ],
+        "length": "600",
+        "laneID": "14",
+        "distance": "2800",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "16",
+        "name": "054",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6817117",
+                "5.2940409"
+            ],
+            [
+                "51.6817093",
+                "5.2940695"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6817149",
+            "5.2940561"
+        ],
+        "length": "100",
+        "laneID": "14",
+        "distance": "12400",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "17",
+        "name": "111",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831252",
+                "5.2937991"
+            ],
+            [
+                "51.6831430",
+                "5.2938251"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831387",
+            "5.2938096"
+        ],
+        "length": "100",
+        "laneID": "1",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "18",
+        "name": "112",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6832956",
+                "5.2937584"
+            ],
+            [
+                "51.6832262",
+                "5.2937792"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6832599",
+            "5.2937619"
+        ],
+        "length": "800",
+        "laneID": "1",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "19",
+        "name": "113",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6833300",
+                "5.2937494"
+            ],
+            [
+                "51.6834893",
+                "5.2937415"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6834097",
+            "5.2937381"
+        ],
+        "length": "1800",
+        "laneID": "1",
+        "distance": "2400",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "20",
+        "name": "114",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6835533",
+                "5.2937302"
+            ],
+            [
+                "51.6835512",
+                "5.2937588"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6835569",
+            "5.2937456"
+        ],
+        "length": "100",
+        "laneID": "1",
+        "distance": "4800",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "21",
+        "name": "121",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831383",
+                "5.2938442"
+            ],
+            [
+                "51.6831545",
+                "5.2938708"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831509",
+            "5.2938551"
+        ],
+        "length": "100",
+        "laneID": "2",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "22",
+        "name": "122",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6833108",
+                "5.2937988"
+            ],
+            [
+                "51.6832406",
+                "5.2938193"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6832746",
+            "5.2938016"
+        ],
+        "length": "800",
+        "laneID": "2",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "23",
+        "name": "123",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6835080",
+                "5.2937879"
+            ],
+            [
+                "51.6833470",
+                "5.2937915"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6834276",
+            "5.2937822"
+        ],
+        "length": "1800",
+        "laneID": "2",
+        "distance": "2400",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "24",
+        "name": "124",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6835780",
+                "5.2937803"
+            ],
+            [
+                "51.6835744",
+                "5.2938089"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6835808",
+            "5.2937960"
+        ],
+        "length": "100",
+        "laneID": "2",
+        "distance": "5100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "25",
+        "name": "221",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6829226",
+                "5.2943562"
+            ],
+            [
+                "51.6829336",
+                "5.2943675"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6829311",
+            "5.2943595"
+        ],
+        "length": "75",
+        "laneID": "9",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "26",
+        "name": "222",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6827450",
+                "5.2943857"
+            ],
+            [
+                "51.6827515",
+                "5.2944042"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6827516",
+            "5.2943952"
+        ],
+        "length": "75",
+        "laneID": "9",
+        "distance": "2200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "27",
+        "name": "223",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6827316",
+                "5.2943834"
+            ],
+            [
+                "51.6827381",
+                "5.2944019"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6827382",
+            "5.2943929"
+        ],
+        "length": "75",
+        "laneID": "9",
+        "distance": "2350",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "33",
+        "name": "K22",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "9",
+        "distance": "2350",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "28",
+        "name": "241",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6830602",
+                "5.2937905"
+            ],
+            [
+                "51.6830526",
+                "5.2938070"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6830551",
+            "5.2937937"
+        ],
+        "length": "75",
+        "laneID": "3",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "34",
+        "name": "K24",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "3",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "29",
+        "name": "281",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831598",
+                "5.2941067"
+            ],
+            [
+                "51.6831522",
+                "5.2941232"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831547",
+            "5.2941100"
+        ],
+        "length": "75",
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "35",
+        "name": "K28",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "36",
+        "name": "K311",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "37",
+        "name": "K312321",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "38",
+        "name": "K322",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "41",
+        "name": "K371",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "42",
+        "name": "K372381",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "43",
+        "name": "K382",
+        "sensorDeviceType": "pushButton",
+        "realSensorPosition": null,
+        "sensorPosition": null,
+        "length": null,
+        "laneID": "4",
+        "distance": "50",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "30",
+        "name": "411",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831268",
+                "5.2943231"
+            ],
+            [
+                "51.6831104",
+                "5.2943351"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831167",
+            "5.2943225"
+        ],
+        "length": "100",
+        "laneID": "12",
+        "distance": "100",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "31",
+        "name": "412",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6831732",
+                "5.2944649"
+            ],
+            [
+                "51.6831572",
+                "5.2944783"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6831631",
+            "5.2944652"
+        ],
+        "length": "100",
+        "laneID": "12",
+        "distance": "1200",
+        "intersectionName": "BOS210"
+    },
+    {
+        "sensorID": "32",
+        "name": "F055",
+        "sensorDeviceType": "inductionLoop",
+        "realSensorPosition": [
+            [
+                "51.6833197",
+                "5.2938807"
+            ],
+            [
+                "51.6832752",
+                "5.2938963"
+            ]
+        ],
+        "sensorPosition": [
+            "51.6832962",
+            "5.2938813"
+        ],
+        "length": "500",
+        "laneID": "15",
+        "distance": "1400",
+        "intersectionName": "BOS210"
+    }
+]
