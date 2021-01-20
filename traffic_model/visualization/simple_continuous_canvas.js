@@ -41,7 +41,7 @@ var ContinuousVisualization = function(height, width, context) {
 		context.lineTo(x2, y2);
 		context.strokeStyle = color;
 		if (type === "sensor"){
-			context.lineWidth = 10;
+			context.lineWidth = 6;
 		}else {
 			context.lineWidth = 2;
 		}
