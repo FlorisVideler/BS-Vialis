@@ -135,7 +135,7 @@ for file in files:
     with open(f'output/laneset_{intersection_name}.json', 'w') as fp:
         json.dump(lane_set, fp, indent=4)
 
-    with open(f'output/signalGroup_{intersection_name}.json', 'w') as fp:
-        json.dump(lane_set, fp, indent=4)
+    with open(f'output/signalgroup_{intersection_name}.json', 'w') as fp:
+        json.dump(sgr_dict, fp, indent=4)
 
 
