@@ -8,3 +8,9 @@ This project contains a simulation and a visualisation of a intersection, both m
 - Mesa installed
 - Pandas installed
 - Numpy installed
+
+## Made by
+- Niels Bijl
+- Jasper van Loon
+- Kai ter Horst
+- Floris Videler
