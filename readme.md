@@ -1,6 +1,6 @@
 # Vialis
 
-## Python eisen
+## Requirements
 - Python 3.8
 - Mesa installed
 - Pandas installed
