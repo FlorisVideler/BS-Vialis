@@ -36,12 +36,12 @@ class Node(Agent):
     def __init__(
             self,
             unique_id: int,
-            model: Model,
+            model,
             pos: tuple,
             stop_line: bool,
             reg: bool,
             lane_id: int,
-            light: Light,
+            light,
             connecting_lane: str = None,
             active: bool = True,
             agent_type: str = "node",
@@ -105,7 +105,7 @@ class Car(Agent):
 
     def __init__(self,
                  unique_id: int,
-                 model: Model,
+                 model,
                  pos: tuple,
                  lane: list,
                  node_index: int,
@@ -295,11 +295,11 @@ class Road(Agent):
     def __init__(
             self,
             unique_id: int,
-            model: Model,
+            model,
             start_node: Node,
             end_node: Node,
             lane_id: str,
-            light: Light = None,
+            light = None,
             active: bool = True,
             agent_type: str = "road"
     ):
@@ -339,7 +339,7 @@ class Sensor(Agent):
     def __init__(
             self,
             unique_id: int,
-            model: Model,
+            model,
             pos: tuple,
             start_pos: tuple,
             end_pos: tuple,
@@ -416,7 +416,7 @@ class Light(Agent):
     def __init__(
             self,
             unique_id: int,
-            model: Model,
+            model,
             pos: tuple,
             state: int,
             light_id: str,

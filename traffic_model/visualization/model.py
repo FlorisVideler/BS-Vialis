@@ -157,8 +157,7 @@ class Traffic(Model):
                                                  lane['connectsTo']['signalGroup'], lane['intersectionName'])
                             self.place_agent(taffic_light, posxy)
                             light_dict[lane_id] = taffic_light
-                    agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, taffic_light,
-                                 connecting_lane)
+                    agent = Node(self.placed_agent_count, self, posxy, stop_line, False, lane_id, taffic_light)
                     self.place_agent(agent, posxy)
                     all_lane_nodes[lane_id].append(agent)
                     if stop_line_lane:

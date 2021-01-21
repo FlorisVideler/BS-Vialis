@@ -15,12 +15,12 @@ class TimeText(TextElement):
     def __init__(self):
         pass
 
-    def render(self, model: Model) -> str:
+    def render(self, model) -> str:
         #Renders time
         return "Time: " + model.data_time
 
 
-def draw(agent: Agent) -> dict:
+def draw(agent) -> dict:
     """
     Changes an agent
     :param agent: Acknowledges an agent
@@ -39,7 +39,7 @@ def draw(agent: Agent) -> dict:
     return {"Shape": "rect", "Filled": "true", "Color": "Cyan", "w": 8, "h": 8}
 
 
-def draw_car(car: Car) -> dict:
+def draw_car(car) -> dict:
     """
     Checks if a car object is active.
     :param car: Acknowledges the object.
@@ -51,7 +51,7 @@ def draw_car(car: Car) -> dict:
         return {}
 
 
-def draw_sensor(sensor: Sensor) -> dict:
+def draw_sensor(sensor) -> dict:
     """
     Changes sensor color based on whether it is activated or not.
     :param sensor: Acknowledges the object.
@@ -65,7 +65,7 @@ def draw_sensor(sensor: Sensor) -> dict:
                 "y1": sensor.start_pos[1], "x2": sensor.end_pos[0], "y2": sensor.end_pos[1], "Type": sensor.agent_type}
 
 
-def draw_road(road: Road) -> dict:
+def draw_road(road) -> dict:
     """
     Creates temporary roads which show on green and yellow light.
     :param road: Acknowledges the object.
@@ -89,7 +89,7 @@ def draw_road(road: Road) -> dict:
                 "y1": road.start_node.pos[1], "x2": road.end_node.pos[0], "y2": road.end_node.pos[1], "Type": road.agent_type}
 
 
-def draw_node(node: Node) -> dict:
+def draw_node(node) -> dict:
     """
     Like road, changes color based on current light state.
     :param node: Acknowledges the object.
@@ -106,7 +106,7 @@ def draw_node(node: Node) -> dict:
         return {"Shape": "rect", "Filled": "true", "Color": "Red", "w": 2, "h": 2}
 
 
-def draw_light(light: Light) -> dict:
+def draw_light(light) -> dict:
     """
     Changes color based on actual color of light.
     :param light: Acknowledges the object.
