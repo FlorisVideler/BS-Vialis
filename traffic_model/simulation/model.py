@@ -41,7 +41,6 @@ class Traffic(Model):
         max_steps: The max amount of steps the simulation will run.
         step_count: The amount of steps the simulation is running for.
     """
-    # TODO: Document and refactor this class.
     placed_agent_count = 0
     sgr_data = sgr_data
     light_dict = {}
@@ -58,7 +57,7 @@ class Traffic(Model):
             width: int = 100,
             height: int = 100,
             max_steps: int = 72000,
-            start: int = 468000
+            start: int = 252500
     ):
         """
         Constructor for the Traffic class.
